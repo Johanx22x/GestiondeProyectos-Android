@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "554751161159",
+    "project_id": "gestion-de-proyectos-56a69",
+    "storage_bucket": "gestion-de-proyectos-56a69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554751161159:android:b6bf8f74c99a95187e5262",
+        "android_client_info": {
+          "package_name": "com.example.gestindeproyectos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfMmj7Wwgz4Z1qsSHfIO_43uLytRJnybU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gestión de Proyectos</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="menu_home">Inicio</string>
+    <string name="menu_gallery">Galería</string>
+    <string name="menu_slideshow">Diapositivas</string>
+    <string name="sign_out">Cerrar Sesión</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="sign_up">Registrarse</string>
+    <string name="email">Correo</string>
+    <string name="password">Contraseña</string>
+    <string name="forgot_password">¿Has olvidado tu contraseña?</string>
+    <string name="system_logo">Logo del sistema</string>
+    <string name="welcome_message">Bienvenido</string>
+</resources>
