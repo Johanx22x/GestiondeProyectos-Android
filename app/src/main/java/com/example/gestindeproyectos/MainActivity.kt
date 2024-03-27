@@ -2,8 +2,11 @@ package com.example.gestindeproyectos
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -16,6 +19,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.gestindeproyectos.auth.AuthActivity
 import com.example.gestindeproyectos.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +30,12 @@ class MainActivity : AppCompatActivity() {
 
     // Firebase Auth
     private lateinit var auth: FirebaseAuth
+
+    // Firebase Storage
+    private lateinit var storage: FirebaseStorage
+
+    // Current user
+    private lateinit var currentUser: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +47,12 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+
+        // Initialize Firebase Storage
+        storage = FirebaseStorage.getInstance()
+
+        // Get the current user
+        currentUser = auth.currentUser!!
 
         binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -51,17 +69,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            // User is not signed in, redirect to AuthActivity
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            // User is signed in, update UI
-            Snackbar.make(binding.root, "Welcome ${currentUser.email}", Snackbar.LENGTH_SHORT).show()
-        }
+        checkUserLoggedIn()
+        loadProfileInfo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,10 +84,48 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    private fun checkUserLoggedIn() {
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            // User is not signed in, redirect to AuthActivity
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            // User is signed in, update UI
+            Snackbar.make(binding.root, "Welcome ${currentUser.email}", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadProfileInfo() {
+        val navView: NavigationView = binding.navView
+        val headerView = navView.getHeaderView(0)
+        val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
+        val userEmail = headerView.findViewById<TextView>(R.id.user_email)
+
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("profile_pictures/${currentUser.uid}.jpg")
+
+        // Download the image from Firebase Storage
+        imageRef.downloadUrl.addOnSuccessListener { uri ->
+            Picasso.get().load(uri).resize(200, 200).centerCrop().into(userPhoto)
+        }.addOnFailureListener { exception ->
+            // Handle any errors that occur during image loading
+            Log.e(TAG, "Error loading image: $exception")
+        }
+
+        userEmail.text = currentUser.email
+    }
+
     fun signOut(item: MenuItem) {
         auth.signOut()
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }
