@@ -6,21 +6,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/menu_home"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_projects"
+            android:icon="@drawable/menu_project"
+            android:title="@string/menu_projects" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
-
-        <!-- TODO: Add an icon to this one -->
+            android:id="@+id/nav_forum"
+            android:icon="@drawable/menu_forum"
+            android:title="@string/menu_forum" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/menu_profile"
+            android:title="@string/menu_profile" />
         <item
             android:id="@+id/nav_sign_out"
-            android:title="@string/sign_out"
-            android:onClick="signOut" />
+            android:icon="@drawable/menu_sign_out"
+            android:onClick="signOut"
+            android:title="@string/sign_out" />
     </group>
 </menu>

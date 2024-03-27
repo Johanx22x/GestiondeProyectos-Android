@@ -8,15 +8,19 @@ class Project (
     private var description: String,
     private var initialDate: Timestamp,
     private var resources: List<Resource>,
-    private var budget: Double,
+    private var budget: Long,
     private var collaborators: List<String>,
     private var tasks: List<Task>,
     private var state: State,
-    private var responsible: Collaborator,
+    private var responsible: Collaborator?,
     private var changeHistory: List<Record>,
     private var meetings: List<Meeting>,
-    private var forum: Forum
+    private var forum: Forum?
 ) {
+    override fun toString(): String {
+        return "Project(id='$id', name='$name', description='$description', initialDate=$initialDate, resources=$resources, budget=$budget, collaborators=$collaborators, tasks=$tasks, state=$state, responsible=$responsible, changeHistory=$changeHistory, meetings=$meetings, forum=$forum)"
+    }
+
     fun getId(): String {
         return id
     }
@@ -53,11 +57,11 @@ class Project (
         this.resources = resources
     }
 
-    fun getBudget(): Double {
+    fun getBudget(): Long {
         return budget
     }
 
-    fun setBudget(budget: Double) {
+    fun setBudget(budget: Long) {
         this.budget = budget
     }
 
@@ -85,7 +89,7 @@ class Project (
         this.state = state
     }
 
-    fun getResponsible(): Collaborator {
+    fun getResponsible(): Collaborator? {
         return responsible
     }
 
@@ -109,7 +113,7 @@ class Project (
         this.meetings = meetings
     }
 
-    fun getForum(): Forum {
+    fun getForum(): Forum? {
         return forum
     }
 
