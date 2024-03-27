@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+
         binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
@@ -44,12 +47,9 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+            R.id.nav_home, R.id.nav_projects, R.id.nav_forum, R.id.nav_profile), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
 
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
