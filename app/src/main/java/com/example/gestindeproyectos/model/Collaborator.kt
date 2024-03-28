@@ -9,7 +9,7 @@ class Collaborator (
     private var phone: String,
     private var department: String,
     private var state: CollaboratorState,
-    private var project: Project?,
+    private var project: String,
     private var type: CollaboratorType
 ) {
     fun getFullName(): String {
@@ -76,11 +76,11 @@ class Collaborator (
         return state
     }
 
-    fun setProject(project: Project) {
+    fun setProject(project: String) {
         this.project = project
     }
 
-    fun getProject(): Project? {
+    fun getProject(): String {
         return project
     }
 

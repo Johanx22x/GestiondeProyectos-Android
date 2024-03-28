@@ -19,4 +19,5 @@
     <string name="welcome_message">Welcome</string>
     <string name="menu_projects">Projects</string>
     <string name="menu_profile">Profile</string>
+    <string name="project_image_description">Project image</string>
 </resources>

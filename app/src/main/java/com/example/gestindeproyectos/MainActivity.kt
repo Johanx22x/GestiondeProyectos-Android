@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var storage: FirebaseStorage
 
     // Current user
-    private lateinit var currentUser: FirebaseUser
+    private val currentUser: FirebaseUser
+        get() = auth.currentUser!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
 
         // Get the current user
-        currentUser = auth.currentUser!!
 
         binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
