@@ -18,6 +18,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gestindeproyectos.auth.AuthActivity
 import com.example.gestindeproyectos.databinding.ActivityMainBinding
+import com.example.gestindeproyectos.db.DB
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         checkUserLoggedIn()
+        checkUserInDB()
         loadProfileInfo()
     }
 
@@ -98,6 +100,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkUserInDB() {
+        // Check if the user already exists in the database
+        // if not send the user to the profile view
+        // to complete the registration
+        val currentUserEmail = auth.currentUser?.email
+
+        DB.instance.fetchCollaborator(currentUserEmail!!).thenAccept { collaborator ->
+            if (collaborator == null) {
+                // User is not in the database, redirect to ProfileFragment
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.nav_profile)
+            }
+        }
+    }
+
     private fun loadProfileInfo() {
         val navView: NavigationView = binding.navView
         val headerView = navView.getHeaderView(0)
@@ -105,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         val userEmail = headerView.findViewById<TextView>(R.id.user_email)
 
         val storageRef = storage.reference
-        val imageRef = storageRef.child("profile_pictures/${currentUser.uid}.jpg")
+        val imageRef = storageRef.child("profile_pictures/${currentUser.uid}")
 
         // Download the image from Firebase Storage
         imageRef.downloadUrl.addOnSuccessListener { uri ->

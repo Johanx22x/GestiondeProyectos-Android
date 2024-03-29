@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
-class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+class EditProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _userProfilePicture = MutableLiveData<Drawable>()
     val userProfilePicture: LiveData<Drawable> = _userProfilePicture
@@ -71,8 +71,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             _userName.value = it.getFullName()
             _userEmail.value = FirebaseAuth.getInstance().currentUser?.email
             _userId.value = getApplication<Application>().resources.getString(R.string.id) + ": " + it.getIdentification()
-            _userPhone.value = getApplication<Application>().resources.getString(R.string.phone) + ": " + it.getPhone()
-            _userDepartment.value = getApplication<Application>().resources.getString(R.string.department) + ": " + it.getDepartment()
+            _userPhone.value = it.getPhone()
+            _userDepartment.value = it.getDepartment()
             _userState.value = when (it.getState()) {
                 CollaboratorState.ACTIVE -> getApplication<Application>().resources.getString(R.string.state) + ": " + getApplication<Application>().resources.getString(R.string.collaborator_state_active)
                 CollaboratorState.INACTIVE -> getApplication<Application>().resources.getString(R.string.state) + ": " + getApplication<Application>().resources.getString(R.string.collaborator_state_inactive)

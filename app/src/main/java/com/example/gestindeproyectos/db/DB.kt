@@ -1,5 +1,6 @@
 package com.example.gestindeproyectos.db
 
+import android.util.Log
 import com.example.gestindeproyectos.model.Collaborator
 import com.example.gestindeproyectos.model.CollaboratorState
 import com.example.gestindeproyectos.model.CollaboratorType
@@ -16,6 +17,7 @@ class DB {
 
     companion object {
         val instance = DB()
+        const val TAG = "DB"
     }
 
     fun fetchProjects(): CompletableFuture<List<Project>> {
@@ -25,27 +27,34 @@ class DB {
             .addOnSuccessListener { result ->
                 val projects = mutableListOf<Project>()
                 for (document in result) {
-                    val project = Project(
-                        document.id,
-                        document.data["name"] as String,
-                        document.data["description"] as String,
-                        document.data["initialDate"] as Timestamp,
-                        emptyList(), // resources
-                        document.data["budget"] as Long,
-                        emptyList(), // collaborators
-                        emptyList(), // tasks
-                        State.fromValue((document.data["state"] as Long).toInt()),
-                        null,
-                        emptyList(), // changeHistory
-                        emptyList(), // meetings
-                        null // forum
-                    )
-                    projects.add(project)
+                    if (!document.exists()) {
+                        continue
+                    }
+                    try {
+                        val project = Project(
+                            document.id,
+                            document.data["name"] as String,
+                            document.data["description"] as String,
+                            document.data["initialDate"] as Timestamp,
+                            emptyList(), // resources
+                            document.data["budget"] as Long,
+                            emptyList(), // collaborators
+                            emptyList(), // tasks
+                            State.fromValue((document.data["state"] as Long).toInt()),
+                            null,
+                            emptyList(), // changeHistory
+                            emptyList(), // meetings
+                            null // forum
+                        )
+                        projects.add(project)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing project", e)
+                    }
                 }
                 future.complete(projects)
             }
             .addOnFailureListener { exception ->
-                println("Error getting documents: $exception")
+                Log.e(TAG, "Error getting documents: $exception")
                 future.completeExceptionally(exception)
             }
 
@@ -84,7 +93,7 @@ class DB {
                 }
             }
             .addOnFailureListener { exception ->
-                println("Error getting document: $exception")
+                Log.e(TAG, "Error getting documents: $exception")
                 future.completeExceptionally(exception)
             }
 
@@ -116,7 +125,7 @@ class DB {
                 future.complete(collaborators)
             }
             .addOnFailureListener { exception ->
-                println("Error getting documents: $exception")
+                Log.e(TAG, "Error getting documents: $exception")
                 future.completeExceptionally(exception)
             }
 
@@ -150,10 +159,24 @@ class DB {
                 }
             }
             .addOnFailureListener { exception ->
-                println("Error getting documents: $exception")
+                Log.e(TAG, "Error getting documents: $exception")
                 future.completeExceptionally(exception)
             }
 
         return future
+    }
+
+    fun updateCollaborator(id: String, phone: String, department: String) {
+        Log.d(TAG, "Updating collaborator $id, phone: $phone, department: $department")
+        db.collection("Collaborator")
+            .document(id)
+            .update(
+                mapOf(
+                    "phone" to phone,
+                    "department" to department
+                )
+            )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
     }
 }

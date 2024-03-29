@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/upload_profile_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:src="@drawable/edit_1479_svgrepo_com"
+        app:layout_constraintStart_toEndOf="@+id/user_profile_picture"
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusable="true"
+        android:contentDescription="@string/change_profile_picture_button" />
+
     <ImageView
         android:id="@+id/user_profile_picture"
         android:layout_width="wrap_content"
@@ -38,25 +51,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
-    <TextView
-        android:id="@+id/user_phone"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_phone_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="@string/phone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_id" />
+        app:layout_constraintTop_toBottomOf="@+id/user_id">
 
-    <TextView
-        android:id="@+id/user_department"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_phone_edit"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone"
+            android:inputType="phone"
+            android:text="@string/phone"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_department_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="@string/department"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_phone" />
+        app:layout_constraintTop_toBottomOf="@+id/user_phone_input">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_department_edit"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/department"
+            android:inputType="text"
+            android:text="@string/department"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/user_state"
@@ -66,7 +99,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/state"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_department" />
+        app:layout_constraintTop_toBottomOf="@+id/user_department_input" />
 
     <TextView
         android:id="@+id/user_project"
@@ -77,16 +110,6 @@
         android:text="@string/project"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_state" />
-
-    <Button
-        android:id="@+id/edit_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/edit_profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/divider"
@@ -107,5 +130,15 @@
         android:text="@string/id"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <Button
+        android:id="@+id/save_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/save_profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
