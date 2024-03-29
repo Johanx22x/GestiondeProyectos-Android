@@ -14,4 +14,22 @@
     <string name="menu_projects">Projects</string>
     <string name="menu_forum">Forum</string>
     <string name="menu_profile">Profile</string>
+    <string name="project_image_description">Project image</string>
+    <string name="user_profile_picture">User profile picture</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone number</string>
+    <string name="department">Department</string>
+    <string name="state">State</string>
+    <string name="project">Project</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="unknown">Unknown</string>
+    <string name="collaborator_state_active">Active</string>
+    <string name="collaborator_state_inactive">Inactive</string>
+    <string name="menu_edit_profile">Edit Profile</string>
+    <string name="save_profile">Save</string>
+    <string name="change_profile_picture_button">Change profile picture button</string>
+    <string name="menu_register_profile">Register Profile</string>
+    <string name="add_a_profile_picture">Add a profile picture</string>
+    <string name="last_name">Lastname</string>
+    <string name="complete_profile">Please complete the following fields in order to continue using the app.</string>
 </resources>

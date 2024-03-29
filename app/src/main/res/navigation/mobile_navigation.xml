@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_collaborators"
+        android:name="com.example.gestindeproyectos.ui.collaborators.CollaboratorsFragment"
+        android:label="@string/menu_collaborators"
+        tools:layout="@layout/fragment_collaborators" />
+
+    <fragment
         android:id="@+id/nav_projects"
         android:name="com.example.gestindeproyectos.ui.projects.ProjectsFragment"
         android:label="@string/menu_projects"
@@ -28,4 +34,16 @@
         android:name="com.example.gestindeproyectos.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_edit_profile"
+        android:name="com.example.gestindeproyectos.ui.profile.EditProfileFragment"
+        android:label="@string/menu_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/nav_register_profile"
+        android:name="com.example.gestindeproyectos.ui.profile.RegisterProfileFragment"
+        android:label="@string/menu_register_profile"
+        tools:layout="@layout/fragment_register_profile" />
 </navigation>

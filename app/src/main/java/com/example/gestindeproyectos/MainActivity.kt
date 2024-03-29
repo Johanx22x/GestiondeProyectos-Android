@@ -16,8 +16,14 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.example.gestindeproyectos.auth.AuthActivity
 import com.example.gestindeproyectos.databinding.ActivityMainBinding
+import com.example.gestindeproyectos.db.DB
+import com.example.gestindeproyectos.model.Collaborator
+import com.example.gestindeproyectos.model.CollaboratorType
+import com.example.gestindeproyectos.ui.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
@@ -38,6 +44,10 @@ class MainActivity : AppCompatActivity() {
     private val currentUser: FirebaseUser
         get() = auth.currentUser!!
 
+    private val profileViewModel: ProfileViewModel by lazy {
+        ViewModelProvider(this)[ProfileViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,8 +62,6 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase Storage
         storage = FirebaseStorage.getInstance()
 
-        // Get the current user
-
         binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
@@ -65,12 +73,30 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_projects, R.id.nav_forum, R.id.nav_profile), drawerLayout)
+            R.id.nav_home, R.id.nav_collaborators, R.id.nav_projects, R.id.nav_forum, R.id.nav_profile), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        profileViewModel.userProfilePicture.observe(this) {
+            val headerView = navView.getHeaderView(0)
+            val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
+
+            userPhoto.setImageDrawable(it)
+        }
+
+        profileViewModel.userName.observe(this) {
+            val headerView = navView.getHeaderView(0)
+            val userName = headerView.findViewById<TextView>(R.id.user_name)
+
+            userName.text = it
+        }
+
+        val headerView = navView.getHeaderView(0)
+        val userEmail = headerView.findViewById<TextView>(R.id.user_email)
+        userEmail.text = currentUser.email
+
         checkUserLoggedIn()
-        loadProfileInfo()
+        checkUserInDB()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -98,24 +124,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProfileInfo() {
-        val navView: NavigationView = binding.navView
-        val headerView = navView.getHeaderView(0)
-        val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
-        val userEmail = headerView.findViewById<TextView>(R.id.user_email)
+    private fun checkUserInDB() {
+        // Check if the user already exists in the database
+        // if not send the user to the profile view
+        // to complete the registration
+        val currentUserEmail = auth.currentUser?.email
 
-        val storageRef = storage.reference
-        val imageRef = storageRef.child("profile_pictures/${currentUser.uid}.jpg")
+        DB.instance.fetchCollaborator(currentUserEmail!!).thenAccept { collaborator ->
+            if (collaborator == null) {
+                // User is not in the database, redirect to ProfileFragment
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.nav_profile)
+            } else {
+                Log.d(TAG, "User is in the database")
+                if (collaborator.getType() == CollaboratorType.MANAGER) {
+                    Log.d(TAG, "User is a manager")
+                    // Enable the Collaborators menu item
+                    val navView: NavigationView = binding.navView
+                    val menu = navView.menu
+                    val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
+                    collaboratorsItem.isVisible = true
 
-        // Download the image from Firebase Storage
-        imageRef.downloadUrl.addOnSuccessListener { uri ->
-            Picasso.get().load(uri).resize(200, 200).centerCrop().into(userPhoto)
-        }.addOnFailureListener { exception ->
-            // Handle any errors that occur during image loading
-            Log.e(TAG, "Error loading image: $exception")
+                    // NOTE: There is an issue that when the collaboratorsItem is set to visible
+                    // the Collaborators item is highlighted in the menu, but the actual
+                    // fragment is the HomeFragment.
+                    // This is the temporary (probably permanent haha) fix for this issue.
+                    val navController = findNavController(R.id.nav_host_fragment_content_main)
+                    navController.navigate(R.id.nav_home)
+                }
+            }
         }
-
-        userEmail.text = currentUser.email
     }
 
     fun signOut(item: MenuItem) {

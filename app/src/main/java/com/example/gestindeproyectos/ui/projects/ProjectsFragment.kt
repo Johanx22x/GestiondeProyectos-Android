@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gestindeproyectos.adapter.ProjectAdapter
 import com.example.gestindeproyectos.databinding.FragmentProjectsBinding
 import com.example.gestindeproyectos.db.DB
-import com.example.gestindeproyectos.model.Collaborator
 import com.example.gestindeproyectos.model.CollaboratorType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,8 +21,6 @@ class ProjectsFragment: Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
-    private var collaborator: Collaborator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +46,7 @@ class ProjectsFragment: Fragment() {
                         }
                     }
                 } else {
-                    DB.instance.fetchProject(collaborator?.getProject()!!).thenAccept { project ->
+                    DB.instance.fetchProject(collaborator.getProject()).thenAccept { project ->
                         activity?.runOnUiThread {
                             binding.projectList.adapter = ProjectAdapter(listOf(project!!))
                         }
