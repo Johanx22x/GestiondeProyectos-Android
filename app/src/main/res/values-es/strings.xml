@@ -32,4 +32,6 @@
     <string name="add_a_profile_picture">Agregar una foto de perfil</string>
     <string name="last_name">Apellidos</string>
     <string name="complete_profile">Por favor rellene los siguientes campos para continuar usando la app.</string>
+    <string name="menu_collaborators">Colaboradores</string>
+    <string name="no_project">Sin asignar</string>
 </resources>

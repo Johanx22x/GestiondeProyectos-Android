@@ -44,12 +44,13 @@ class MainActivity : AppCompatActivity() {
     private val currentUser: FirebaseUser
         get() = auth.currentUser!!
 
-    private val profileViewModel: ProfileViewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
-    }
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize ProfileViewModel
+        profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -62,11 +63,6 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase Storage
         storage = FirebaseStorage.getInstance()
 
-        binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -77,21 +73,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        val headerView = navView.getHeaderView(0)
+        val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
         profileViewModel.userProfilePicture.observe(this) {
-            val headerView = navView.getHeaderView(0)
-            val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
-
             userPhoto.setImageDrawable(it)
         }
 
-        profileViewModel.userName.observe(this) {
-            val headerView = navView.getHeaderView(0)
-            val userName = headerView.findViewById<TextView>(R.id.user_name)
-
-            userName.text = it
-        }
-
-        val headerView = navView.getHeaderView(0)
         val userEmail = headerView.findViewById<TextView>(R.id.user_email)
         userEmail.text = currentUser.email
 
