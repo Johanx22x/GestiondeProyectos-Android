@@ -20,9 +20,10 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfilePicture: LiveData<Drawable> = _userProfilePicture
 
     private val _collaborator = MutableLiveData<Collaborator?>()
-    private val _userName = MutableLiveData<String>()
     private val _userEmail = MutableLiveData<String>()
     private val _userId = MutableLiveData<String>()
+    private val _userName = MutableLiveData<String>()
+    private val _userLastName = MutableLiveData<String>()
     private val _userPhone = MutableLiveData<String>()
     private val _userDepartment = MutableLiveData<String>()
     private val _userState = MutableLiveData<String>()
@@ -68,14 +69,19 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
 
     private fun updateLiveDataValues(collaborator: Collaborator?) {
         collaborator?.let {
-            _userName.value = it.getFullName()
             _userEmail.value = FirebaseAuth.getInstance().currentUser?.email
             _userId.value = getApplication<Application>().resources.getString(R.string.id) + ": " + it.getIdentification()
+            _userName.value = it.getName()
+            _userLastName.value = it.getLastName()
             _userPhone.value = it.getPhone()
             _userDepartment.value = it.getDepartment()
             _userState.value = when (it.getState()) {
                 CollaboratorState.ACTIVE -> getApplication<Application>().resources.getString(R.string.state) + ": " + getApplication<Application>().resources.getString(R.string.collaborator_state_active)
                 CollaboratorState.INACTIVE -> getApplication<Application>().resources.getString(R.string.state) + ": " + getApplication<Application>().resources.getString(R.string.collaborator_state_inactive)
+            }
+            if (it.getProject().isEmpty()) {
+                _userProject.value = getApplication<Application>().resources.getString(R.string.project) + ": " + getApplication<Application>().resources.getString(R.string.no_project)
+                return
             }
             DB.instance.fetchProject(it.getProject()).thenAccept { project ->
                 _userProject.postValue(getApplication<Application>().resources.getString(R.string.project) + ": " + project?.getName())
@@ -92,9 +98,10 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    val userName: LiveData<String> = _userName
     val userEmail: LiveData<String> = _userEmail
     val userId: LiveData<String> = _userId
+    val userName: LiveData<String> = _userName
+    val userLastname: LiveData<String> = _userLastName
     val userPhone: LiveData<String> = _userPhone
     val userDepartment: LiveData<String> = _userDepartment
     val userState: LiveData<String> = _userState

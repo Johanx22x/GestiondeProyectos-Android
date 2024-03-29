@@ -107,7 +107,14 @@ class DB {
             .addOnSuccessListener { result ->
                 val collaborators = mutableListOf<Collaborator>()
                 for (document in result) {
-                    val projectReference = document.data["project"] as DocumentReference
+
+                    // Check if the field project exists
+                    val projectId = if (document.data.containsKey("project")) {
+                        (document.data["project"] as DocumentReference).id
+                    } else {
+                        ""
+                    }
+
                     val collaborator = Collaborator(
                         document.id,
                         document.data["identification"] as String,
@@ -117,7 +124,7 @@ class DB {
                         document.data["phone"] as String,
                         document.data["department"] as String,
                         CollaboratorState.fromValue((document.data["state"] as Long).toInt()),
-                        projectReference.id,
+                        projectId,
                         CollaboratorType.fromValue((document.data["type"] as Long).toInt())
                     )
                     collaborators.add(collaborator)
@@ -142,7 +149,14 @@ class DB {
                     future.complete(null)
                 } else {
                     val document = result.documents[0]
-                    val projectReference = document.data!!["project"] as DocumentReference
+
+                    // Check if the field project exists
+                    val projectId = if (document.data?.containsKey("project") == true) {
+                        (document.data!!["project"] as DocumentReference).id
+                    } else {
+                        ""
+                    }
+
                     val collaborator = Collaborator(
                         document.id,
                         document.data?.get("id") as String,
@@ -152,7 +166,7 @@ class DB {
                         document.data!!["phone"] as String,
                         document.data!!["department"] as String,
                         CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
-                        projectReference.id,
+                        projectId,
                         CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
                     )
                     future.complete(collaborator)
@@ -166,17 +180,49 @@ class DB {
         return future
     }
 
-    fun updateCollaborator(id: String, phone: String, department: String) {
+    fun updateCollaborator(id: String, name: String, lastname: String, phone: String, department: String) {
         Log.d(TAG, "Updating collaborator $id, phone: $phone, department: $department")
         db.collection("Collaborator")
             .document(id)
             .update(
                 mapOf(
+                    "name" to name,
+                    "lastname" to lastname,
                     "phone" to phone,
                     "department" to department
                 )
             )
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
             .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
+    }
+
+    fun addCollaborator(
+        id: String,
+        email: String,
+        name: String,
+        lastname: String,
+        phone: String,
+        identification: String,
+        department: String,
+        state: CollaboratorState,
+        type: CollaboratorType
+    ) {
+        Log.d(TAG, "Adding collaborator $id, email: $email, name: $name, lastname: $lastname, phone: $phone, department: $department, state: $state, type: $type")
+        db.collection("Collaborator")
+            .document(id)
+            .set(
+                mapOf(
+                    "email" to email,
+                    "name" to name,
+                    "lastname" to lastname,
+                    "phone" to phone,
+                    "id" to identification,
+                    "department" to department,
+                    "state" to state.value,
+                    "type" to type.value
+                )
+            )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 }

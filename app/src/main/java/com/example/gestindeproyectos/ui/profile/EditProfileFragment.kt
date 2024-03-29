@@ -5,16 +5,17 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.gestindeproyectos.MainActivity
 import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.databinding.FragmentEditProfileBinding
 import com.example.gestindeproyectos.db.DB
@@ -49,20 +50,29 @@ class EditProfileFragment : Fragment() {
 
         // Set an OnClickListener on the button
         buttonUpload.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE)
+            val intent = Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+            }
+            startActivityForResult(
+                Intent.createChooser(intent, "Select Picture"),
+                PICK_IMAGE_REQUEST
+            )
             updateImageButtonClicked = true
         }
 
         val saveButton = binding.saveProfile
         saveButton.setOnClickListener {
+            val userName = binding.userNameEdit.text.toString()
+            val userLastname = binding.userLastnameEdit.text.toString()
             val userPhone = binding.userPhoneEdit.text.toString()
             val userDepartment = binding.userDepartmentEdit.text.toString()
 
             // Save the profile modifications
             DB.instance.updateCollaborator(
                 FirebaseAuth.getInstance().currentUser?.uid!!,
+                userName,
+                userLastname,
                 userPhone,
                 userDepartment,
             )
@@ -89,16 +99,14 @@ class EditProfileFragment : Fragment() {
             // Navigate back to the profile fragment
             val navController = findNavController()
             navController.navigate(R.id.nav_profile)
+
+            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
         }
 
         // set the fields for edit profile view model
         val userProfilePictureViewMode: ImageView = binding.userProfilePicture
         editProfileViewModel.userProfilePicture.observe(viewLifecycleOwner) {
             userProfilePictureViewMode.setImageDrawable(it)
-        }
-        val userNameTextView: TextView = binding.userName
-        editProfileViewModel.userName.observe(viewLifecycleOwner) {
-            userNameTextView.text = it
         }
         val userEmailTextView: TextView = binding.userEmail
         editProfileViewModel.userEmail.observe(viewLifecycleOwner) {
@@ -107,6 +115,14 @@ class EditProfileFragment : Fragment() {
         val userId: TextView = binding.userId
         editProfileViewModel.userId.observe(viewLifecycleOwner) {
             userId.text = it
+        }
+        val userName: TextView = binding.userNameEdit
+        editProfileViewModel.userName.observe(viewLifecycleOwner) {
+            userName.text = it
+        }
+        val userLastname: TextView = binding.userLastnameEdit
+        editProfileViewModel.userLastname.observe(viewLifecycleOwner) {
+            userLastname.text = it
         }
         val userPhone: TextView = binding.userPhoneEdit
         editProfileViewModel.userPhone.observe(viewLifecycleOwner) {
@@ -132,9 +148,9 @@ class EditProfileFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             val imageUri = data.data
-            Picasso.get().load(imageUri).resize(500, 500).centerCrop().into(userProfilePicture)
+            Picasso.get().load(imageUri).resize(1000, 1000).centerCrop().into(userProfilePicture)
         } else {
             // Handle the error
             Log.e(TAG, "Error while picking the image")
@@ -152,7 +168,7 @@ class EditProfileFragment : Fragment() {
     }
 
     companion object {
-        private const val PICK_IMAGE_REQUEST_CODE = 1
+        private const val PICK_IMAGE_REQUEST = 1
         private const val TAG = "EditProfileFragment"
     }
 }

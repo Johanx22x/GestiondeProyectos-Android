@@ -26,4 +26,10 @@
     <string name="collaborator_state_active">Activo</string>
     <string name="collaborator_state_inactive">Inactivo</string>
     <string name="menu_edit_profile">Editar Perfil</string>
+    <string name="save_profile">Guardar</string>
+    <string name="change_profile_picture_button">Boton para cambiar la foto de perfil</string>
+    <string name="menu_register_profile">Registrar Perfil</string>
+    <string name="add_a_profile_picture">Agregar una foto de perfil</string>
+    <string name="last_name">Apellidos</string>
+    <string name="complete_profile">Por favor rellene los siguientes campos para continuar usando la app.</string>
 </resources>

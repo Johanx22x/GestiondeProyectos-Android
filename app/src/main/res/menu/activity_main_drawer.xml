@@ -9,6 +9,11 @@
             android:icon="@drawable/menu_home"
             android:title="@string/menu_home" />
         <item
+            android:id="@+id/nav_collaborators"
+            android:icon="@drawable/menu_collaborators"
+            android:title="@string/menu_collaborators"
+            android:visible="false" />
+        <item
             android:id="@+id/nav_projects"
             android:icon="@drawable/menu_project"
             android:title="@string/menu_projects" />
@@ -20,10 +25,12 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/menu_profile"
             android:title="@string/menu_profile" />
+        <!--
         <item
             android:id="@+id/nav_sign_out"
             android:icon="@drawable/menu_sign_out"
             android:onClick="signOut"
             android:title="@string/sign_out" />
+        -->
     </group>
 </menu>

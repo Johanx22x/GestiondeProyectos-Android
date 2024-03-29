@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.gestindeproyectos.MainActivity
 import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.databinding.FragmentProfileBinding
 import com.example.gestindeproyectos.db.DB
@@ -35,7 +36,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
+            ViewModelProvider(this)[ProfileViewModel::class.java]
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
@@ -57,8 +58,7 @@ class ProfileFragment : Fragment() {
                     val navController = findNavController()
 
                     // Replace the current fragment with the registration fragment
-                    // TODO: Create the registration fragment
-                    navController.navigate(R.id.nav_forum)
+                    navController.navigate(R.id.nav_register_profile)
                 }
             }
         }
