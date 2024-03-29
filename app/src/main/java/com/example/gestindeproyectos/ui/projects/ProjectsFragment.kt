@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gestindeproyectos.adapter.ProjectAdapter
@@ -45,13 +46,13 @@ class ProjectsFragment: Fragment() {
                 if (collaborator.getType() == CollaboratorType.MANAGER) {
                     DB.instance.fetchProjects().thenAccept { projectList ->
                         activity?.runOnUiThread {
-                            binding.projectList.adapter = ProjectAdapter(projectList)
-                        }
-                    }
+                            binding.projectList.adapter = ProjectAdapter(projectList, findNavController())
+                }
+            }
                 } else {
                     DB.instance.fetchProject(collaborator?.getProject()!!).thenAccept { project ->
                         activity?.runOnUiThread {
-                            binding.projectList.adapter = ProjectAdapter(listOf(project!!))
+                            binding.projectList.adapter = ProjectAdapter(listOf(project!!), findNavController())
                         }
                     }
                 }

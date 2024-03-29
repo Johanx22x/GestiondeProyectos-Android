@@ -20,4 +20,8 @@
     <string name="menu_projects">Projects</string>
     <string name="menu_profile">Profile</string>
     <string name="project_image_description">Project image</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="fragment_detail_project">Details</string>
+    <string name="project_card">Projects</string>
 </resources>

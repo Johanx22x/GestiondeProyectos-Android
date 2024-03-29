@@ -14,4 +14,9 @@
     <string name="menu_projects">Proyectos</string>
     <string name="menu_forum">Foro</string>
     <string name="menu_profile">Perfil</string>
+    <string name="project_image_description">Imagen del proyecto</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Previo</string>
+    <string name="fragment_detail_project">Detalles</string>
+    <string name="project_card">Proyectos</string>
 </resources>

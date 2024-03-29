@@ -28,4 +28,10 @@
         android:name="com.example.gestindeproyectos.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/detail_project"
+        android:name="com.example.gestindeproyectos.ui.projects.DetailProjectFragment"
+        android:label="@string/fragment_detail_project"
+        tools:layout="@layout/fragment_detail_project" />
 </navigation>
