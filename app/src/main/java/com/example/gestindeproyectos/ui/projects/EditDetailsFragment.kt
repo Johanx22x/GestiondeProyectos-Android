@@ -1,16 +1,15 @@
 package com.example.gestindeproyectos.ui.projects
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.databinding.FragmentDetailProjectBinding
-import com.example.gestindeproyectos.ui.forum.ForumViewModel
 
-class DetailProjectFragment : Fragment() {
+class EditDetailsFragment : Fragment() {
 
     private var _binding: FragmentDetailProjectBinding? = null
 

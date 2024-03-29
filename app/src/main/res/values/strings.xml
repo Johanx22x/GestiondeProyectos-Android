@@ -24,4 +24,6 @@
     <string name="previous">Previous</string>
     <string name="fragment_detail_project">Details</string>
     <string name="project_card">Projects</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

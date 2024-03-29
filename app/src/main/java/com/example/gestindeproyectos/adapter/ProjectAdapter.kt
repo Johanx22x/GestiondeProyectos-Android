@@ -54,7 +54,11 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         }
 
         holder.projectEditDetailsButton.setOnClickListener() {
-            navController.navigate(R.id.detail_project)
+            val projectId = currentItem.getName()
+            val bundle = Bundle().apply {
+                putString("projectId", projectId)
+            }
+            navController.navigate(R.id.detail_project, bundle)
         }
     }
 
