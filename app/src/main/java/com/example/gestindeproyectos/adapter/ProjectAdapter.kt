@@ -46,7 +46,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         holder.projectName.text = currentItem.getName()
         holder.projectDescription.text = currentItem.getDescription()
         holder.projectDetailsButton.setOnClickListener() {
-            val projectId = currentItem.getName()
+            val projectId = currentItem.getId()
             val bundle = Bundle().apply {
                 putString("projectId", projectId)
             }
@@ -58,7 +58,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
             val bundle = Bundle().apply {
                 putString("projectId", projectId)
             }
-            navController.navigate(R.id.detail_project, bundle)
+            navController.navigate(R.id.edit_details_project, bundle)
         }
     }
 

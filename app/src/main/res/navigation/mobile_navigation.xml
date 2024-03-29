@@ -34,4 +34,10 @@
         android:name="com.example.gestindeproyectos.ui.projects.DetailProjectFragment"
         android:label="@string/fragment_detail_project"
         tools:layout="@layout/fragment_detail_project" />
+
+    <fragment
+        android:id="@+id/edit_details_project"
+        android:name="com.example.gestindeproyectos.ui.projects.EditDetailsFragment"
+        android:label="@string/fragment_detail_project"
+        tools:layout="@layout/fragment_edit_details" />
 </navigation>
