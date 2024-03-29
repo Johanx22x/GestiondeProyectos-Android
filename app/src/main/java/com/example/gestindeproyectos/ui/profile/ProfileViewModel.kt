@@ -19,8 +19,6 @@ import com.squareup.picasso.Picasso
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _userProfilePicture = MutableLiveData<Drawable>()
-    val userProfilePicture: LiveData<Drawable> = _userProfilePicture
-
     private val _collaborator = MutableLiveData<Collaborator?>()
     private val _userName = MutableLiveData<String>()
     private val _userEmail = MutableLiveData<String>()
@@ -112,6 +110,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    val userProfilePicture: LiveData<Drawable> = _userProfilePicture
     val userName: LiveData<String> = _userName
     val userEmail: LiveData<String> = _userEmail
     val userId: LiveData<String> = _userId
