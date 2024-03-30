@@ -182,7 +182,7 @@ class DB {
         return future
     }
 
-<<
+
     fun updateCollaborator(id: String, name: String, lastname: String, phone: String, department: String) {
         Log.d(TAG, "Updating collaborator $id, phone: $phone, department: $department")
         db.collection("Collaborator")
