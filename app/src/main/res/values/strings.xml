@@ -40,6 +40,9 @@
     <string name="complete_profile">Please complete the following fields in order to continue using the app.</string>
     <string name="menu_collaborators">Collaborators</string>
     <string name="no_project">Unassigned</string>
+    <string name="forum_item_reply_button">Reply</string>
+    <string name="view">View</string>
+    <string name="create_forum_item">Create</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="fragment_detail_project">Details</string>

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.gestindeproyectos.MainActivity
 import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.databinding.FragmentProfileBinding
 import com.example.gestindeproyectos.db.DB
@@ -49,7 +48,7 @@ class ProfileFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        DB.instance.fetchCollaborator(currentUser!!.email!!).thenAccept { collaborator ->
+        DB.instance.fetchCollaboratorWithEmail(currentUser!!.email!!).thenAccept { collaborator ->
             activity?.runOnUiThread {
                 if (collaborator == null) {
                     Log.d(TAG, "Collaborator not found")

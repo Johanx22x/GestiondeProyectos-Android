@@ -16,18 +16,15 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.example.gestindeproyectos.auth.AuthActivity
 import com.example.gestindeproyectos.databinding.ActivityMainBinding
 import com.example.gestindeproyectos.db.DB
-import com.example.gestindeproyectos.model.Collaborator
 import com.example.gestindeproyectos.model.CollaboratorType
 import com.example.gestindeproyectos.ui.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
@@ -117,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         // to complete the registration
         val currentUserEmail = auth.currentUser?.email
 
-        DB.instance.fetchCollaborator(currentUserEmail!!).thenAccept { collaborator ->
+        DB.instance.fetchCollaboratorWithEmail(currentUserEmail!!).thenAccept { collaborator ->
             if (collaborator == null) {
                 // User is not in the database, redirect to ProfileFragment
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
