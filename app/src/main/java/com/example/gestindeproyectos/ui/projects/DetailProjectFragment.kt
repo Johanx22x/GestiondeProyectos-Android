@@ -1,20 +1,13 @@
 package com.example.gestindeproyectos.ui.projects
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.gestindeproyectos.databinding.FragmentDetailProjectBinding
 import com.example.gestindeproyectos.db.DB
-import com.example.gestindeproyectos.ui.forum.ForumViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 
 class ForumItem(
     private val id: String,
-    private var author: Collaborator?,
+    private var authorId: String,
     private var content: String,
     private var timestamp: Timestamp?,
     private var replies: List<ForumItem>
@@ -13,13 +13,21 @@ class ForumItem(
         return id
     }
 
-    fun getAuthor(): Collaborator? {
-        return author
+    fun getAuthorId(): String {
+        return authorId
     }
 
-    fun setAuthor(author: Collaborator) {
-        this.author = author
+    fun setAuthorId(authorId: String) {
+        this.authorId = authorId
     }
+
+    // fun getAuthor(): Collaborator? {
+    //     return author
+    // }
+
+    // fun setAuthor(author: Collaborator) {
+    //     this.author = author
+    // }
 
     fun getContent(): String {
         return content

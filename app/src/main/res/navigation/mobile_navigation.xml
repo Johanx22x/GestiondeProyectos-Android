@@ -47,6 +47,7 @@
         android:name="com.example.gestindeproyectos.ui.profile.RegisterProfileFragment"
         android:label="@string/menu_register_profile"
         tools:layout="@layout/fragment_register_profile" />
+
     <fragment
         android:id="@+id/detail_project"
         android:name="com.example.gestindeproyectos.ui.projects.DetailProjectFragment"

@@ -4,6 +4,9 @@ import android.util.Log
 import com.example.gestindeproyectos.model.Collaborator
 import com.example.gestindeproyectos.model.CollaboratorState
 import com.example.gestindeproyectos.model.CollaboratorType
+
+import com.example.gestindeproyectos.model.Forum
+import com.example.gestindeproyectos.model.ForumItem
 import com.example.gestindeproyectos.model.Meeting
 import com.example.gestindeproyectos.model.Project
 import com.example.gestindeproyectos.model.State
@@ -109,27 +112,30 @@ class DB {
             .addOnSuccessListener { result ->
                 val collaborators = mutableListOf<Collaborator>()
                 for (document in result) {
+                    try {
+                        // Check if the field project exists
+                        val projectId = if (document.data.containsKey("project")) {
+                            (document.data["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
 
-                    // Check if the field project exists
-                    val projectId = if (document.data.containsKey("project")) {
-                        (document.data["project"] as DocumentReference).id
-                    } else {
-                        ""
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data["id"] as String,
+                            document.data["name"] as String,
+                            document.data["lastname"] as String,
+                            document.data["email"] as String,
+                            document.data["phone"] as String,
+                            document.data["department"] as String,
+                            CollaboratorState.fromValue((document.data["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data["type"] as Long).toInt())
+                        )
+                        collaborators.add(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
                     }
-
-                    val collaborator = Collaborator(
-                        document.id,
-                        document.data["identification"] as String,
-                        document.data["name"] as String,
-                        document.data["lastname"] as String,
-                        document.data["email"] as String,
-                        document.data["phone"] as String,
-                        document.data["department"] as String,
-                        CollaboratorState.fromValue((document.data["state"] as Long).toInt()),
-                        projectId,
-                        CollaboratorType.fromValue((document.data["type"] as Long).toInt())
-                    )
-                    collaborators.add(collaborator)
                 }
                 future.complete(collaborators)
             }
@@ -141,7 +147,56 @@ class DB {
         return future
     }
 
-    fun fetchCollaborator(email: String): CompletableFuture<Collaborator?> {
+    fun fetchCollaborator(id: String): CompletableFuture<Collaborator?> {
+        val future = CompletableFuture<Collaborator?>()
+        db.collection("Collaborator")
+            .document(id)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    if (!document.exists()) {
+                        future.complete(null)
+                        return@addOnSuccessListener
+                    }
+
+                    try {
+                        // Check if the field project exists
+                        val projectId = if (document.data?.containsKey("project") == true) {
+                            (document.data!!["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
+
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data?.get("id") as String,
+                            document.data!!["name"] as String,
+                            document.data!!["lastname"] as String,
+                            document.data!!["email"] as String,
+                            document.data!!["phone"] as String,
+                            document.data!!["department"] as String,
+                            CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
+                        )
+                        future.complete(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
+                        future.complete(null)
+                    }
+                } else {
+                    future.complete(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: $exception")
+                future.completeExceptionally(exception)
+            }
+
+        return future
+    }
+
+    fun fetchCollaboratorWithEmail(email: String): CompletableFuture<Collaborator?> {
         val future = CompletableFuture<Collaborator?>()
         db.collection("Collaborator")
             .whereEqualTo("email", email)
@@ -150,28 +205,33 @@ class DB {
                 if (result.isEmpty) {
                     future.complete(null)
                 } else {
-                    val document = result.documents[0]
+                    try {
+                        val document = result.documents[0]
 
-                    // Check if the field project exists
-                    val projectId = if (document.data?.containsKey("project") == true) {
-                        (document.data!!["project"] as DocumentReference).id
-                    } else {
-                        ""
+                        // Check if the field project exists
+                        val projectId = if (document.data?.containsKey("project") == true) {
+                            (document.data!!["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
+
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data?.get("id") as String,
+                            document.data!!["name"] as String,
+                            document.data!!["lastname"] as String,
+                            document.data!!["email"] as String,
+                            document.data!!["phone"] as String,
+                            document.data!!["department"] as String,
+                            CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
+                        )
+                        future.complete(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
+                        future.complete(null)
                     }
-
-                    val collaborator = Collaborator(
-                        document.id,
-                        document.data?.get("id") as String,
-                        document.data!!["name"] as String,
-                        document.data!!["lastname"] as String,
-                        document.data!!["email"] as String,
-                        document.data!!["phone"] as String,
-                        document.data!!["department"] as String,
-                        CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
-                        projectId,
-                        CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
-                    )
-                    future.complete(collaborator)
                 }
             }
             .addOnFailureListener { exception ->
@@ -227,6 +287,105 @@ class DB {
             )
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
             .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
+    }
+
+    fun fetchGlobalForum(): CompletableFuture<Forum> {
+        val future = CompletableFuture<Forum>()
+        db.collection("Forum")
+            .whereEqualTo("isLocal", false)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    future.complete(null)
+                } else {
+                    val document = result.documents[0]
+                    val forum = Forum(
+                        document.id,
+                        document.data!!["name"] as String,
+                        document.data!!["isLocal"] as Boolean,
+                        emptyList() // items
+                    )
+                    future.complete(forum)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: $exception")
+                future.completeExceptionally(exception)
+            }
+
+        return future
+    }
+
+    fun fetchForumItems(forumId: String): CompletableFuture<List<ForumItem>> {
+        val future = CompletableFuture<List<ForumItem>>()
+        db.collection("Forum")
+            .document(forumId)
+            .collection("Items")
+            .orderBy("datetime", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val forumItems = mutableListOf<ForumItem>()
+                for (document in result) {
+                    if (document.data["author"] == null) {
+                        continue
+                    }
+                    try {
+                        val forumItem = ForumItem(
+                            document.id,
+                            (document.data["author"] as DocumentReference).id,
+                            document.data["content"] as String,
+                            document.data["datetime"] as Timestamp,
+                            emptyList()
+                        )
+                        Log.d(TAG, "Forum item: $forumItem")
+                        forumItems.add(forumItem)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing forum item", e)
+                    }
+                }
+                future.complete(forumItems)
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: $exception")
+                future.completeExceptionally(exception)
+            }
+
+        return future
+    }
+
+    fun fetchForumItemReplies(forumId: String, forumItemId: String): CompletableFuture<List<ForumItem>> {
+        val future = CompletableFuture<List<ForumItem>>()
+        db.collection("Forum")
+            .document(forumId)
+            .collection("Items")
+            .document(forumItemId)
+            .collection("Replies")
+            .get()
+            .addOnSuccessListener { result ->
+                val forumItems = mutableListOf<ForumItem>()
+                for (document in result) {
+                    try {
+                        val forumItem = ForumItem(
+                            document.id,
+                            (document.data["author"] as DocumentReference).id,
+                            document.data["content"] as String,
+                            document.data["date"] as Timestamp,
+                            emptyList()
+                        )
+                        forumItems.add(forumItem)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing forum item", e)
+                    }
+                }
+                future.complete(forumItems)
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: $exception")
+                future.completeExceptionally(exception)
+            }
+
+        return future
     }
 
     // Func to fetch all the meetings from a specific project

@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.gestindeproyectos.MainActivity
 import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.db.DB
 import com.example.gestindeproyectos.model.Collaborator
@@ -34,7 +33,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         val imageRef = storageRef.child("profile_pictures/${currentUser?.uid}")
         loadProfilePicture(imageRef)
 
-        DB.instance.fetchCollaborator(FirebaseAuth.getInstance().currentUser!!.email!!).thenAccept { collaborator ->
+        DB.instance.fetchCollaboratorWithEmail(FirebaseAuth.getInstance().currentUser!!.email!!).thenAccept { collaborator ->
             _collaborator.postValue(collaborator)
         }
 
@@ -104,7 +103,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     fun fetchData() {
         val email = FirebaseAuth.getInstance().currentUser?.email
         email?.let {
-            DB.instance.fetchCollaborator(it).thenAccept { collaborator ->
+            DB.instance.fetchCollaboratorWithEmail(it).thenAccept { collaborator ->
                 _collaborator.postValue(collaborator)
             }
         }

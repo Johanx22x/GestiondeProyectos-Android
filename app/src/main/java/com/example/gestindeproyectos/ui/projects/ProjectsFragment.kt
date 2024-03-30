@@ -35,7 +35,7 @@ class ProjectsFragment: Fragment() {
 
         val currentUser = FirebaseAuth.getInstance().currentUser as FirebaseUser
 
-        DB.instance.fetchCollaborator(currentUser.email!!).thenAccept { collaborator ->
+        DB.instance.fetchCollaboratorWithEmail(currentUser.email!!).thenAccept { collaborator ->
             activity?.runOnUiThread {
                 if (collaborator == null) {
                     return@runOnUiThread
