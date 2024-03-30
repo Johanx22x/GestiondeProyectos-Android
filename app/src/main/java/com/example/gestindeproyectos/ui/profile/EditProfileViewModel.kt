@@ -55,7 +55,7 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
             _userProfilePicture.value = BitmapDrawable(android.graphics.Bitmap.createBitmap(1000, 1000, android.graphics.Bitmap.Config.ARGB_8888))
         }
 
-        DB.instance.fetchCollaborator(FirebaseAuth.getInstance().currentUser!!.email!!).thenAccept { collaborator ->
+        DB.instance.fetchCollaboratorWithEmail(FirebaseAuth.getInstance().currentUser!!.email!!).thenAccept { collaborator ->
             _collaborator.postValue(collaborator)
         }
 
@@ -90,7 +90,7 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
     fun fetchData() {
         val email = FirebaseAuth.getInstance().currentUser?.email
         email?.let {
-            DB.instance.fetchCollaborator(it).thenAccept { collaborator ->
+            DB.instance.fetchCollaboratorWithEmail(it).thenAccept { collaborator ->
                 _collaborator.postValue(collaborator)
             }
         }
