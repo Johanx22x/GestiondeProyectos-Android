@@ -15,6 +15,7 @@
     <string name="menu_forum">Forum</string>
     <string name="menu_profile">Profile</string>
     <string name="project_image_description">Project image</string>
+
     <string name="user_profile_picture">User profile picture</string>
     <string name="name">Name</string>
     <string name="phone">Phone number</string>
@@ -37,4 +38,8 @@
     <string name="forum_item_reply_button">Reply</string>
     <string name="view">View</string>
     <string name="create_forum_item">Create</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="fragment_detail_project">Details</string>
+    <string name="project_card">Projects</string>
 </resources>

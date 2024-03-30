@@ -43,4 +43,9 @@
     <string name="forum_item_reply_button">Reply</string>
     <string name="view">View</string>
     <string name="create_forum_item">Create</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="fragment_detail_project">Details</string>
+    <string name="project_card">Projects</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
