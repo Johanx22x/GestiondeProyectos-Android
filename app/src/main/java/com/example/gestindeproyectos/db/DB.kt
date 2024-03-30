@@ -4,8 +4,10 @@ import android.util.Log
 import com.example.gestindeproyectos.model.Collaborator
 import com.example.gestindeproyectos.model.CollaboratorState
 import com.example.gestindeproyectos.model.CollaboratorType
+import com.example.gestindeproyectos.model.Meeting
 import com.example.gestindeproyectos.model.Project
 import com.example.gestindeproyectos.model.State
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
@@ -79,7 +81,7 @@ class DB {
                         document.data!!["initialDate"] as Timestamp,
                         emptyList(), // resources
                         document.data!!["budget"] as Long,
-                        emptyList(), // collaborators
+                        document.data!!["collaborators"] as? List<String> ?: emptyList(), // collaborators
                         emptyList(), // tasks
                         State.fromValue((document.data!!["state"] as Long).toInt()),
                         null,
@@ -180,6 +182,7 @@ class DB {
         return future
     }
 
+<<
     fun updateCollaborator(id: String, name: String, lastname: String, phone: String, department: String) {
         Log.d(TAG, "Updating collaborator $id, phone: $phone, department: $department")
         db.collection("Collaborator")
@@ -224,5 +227,39 @@ class DB {
             )
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
             .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
+    }
+
+    // Func to fetch all the meetings from a specific project
+    // param: Project ID
+    fun fetchMeetings(id: String): CompletableFuture<List<Meeting>> {
+        val future = CompletableFuture<List<Meeting>>()
+        db.collection("Project/$id/meetings")
+            .get()
+            .addOnSuccessListener { documents ->
+                val meetingsList = mutableListOf<Meeting>()
+                for (document in documents) {
+                    val meeting = document.toObject(Meeting::class.java)
+                    meetingsList.add(meeting)
+                }
+                future.complete(meetingsList)
+            }
+            .addOnFailureListener { exception ->
+                future.completeExceptionally(exception)
+            }
+        return future
+    }
+
+    // Función para actualizar los detalles de un documento en Firebase
+    fun updateDetails(documentId: String, newName: String, newDescription: String): Task<Void> {
+
+        // Crea un mapa con los nuevos datos
+        val newData = hashMapOf(
+            "name" to newName,
+            "description" to newDescription
+        )
+
+        // Actualiza el documento con los nuevos datos
+        return db.collection("Project").document(documentId)
+            .update(newData as Map<String, Any>)
     }
 }

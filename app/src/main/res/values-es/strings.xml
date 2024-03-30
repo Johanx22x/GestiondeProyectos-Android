@@ -34,4 +34,8 @@
     <string name="complete_profile">Por favor rellene los siguientes campos para continuar usando la app.</string>
     <string name="menu_collaborators">Colaboradores</string>
     <string name="no_project">Sin asignar</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Previo</string>
+    <string name="fragment_detail_project">Detalles</string>
+    <string name="project_card">Proyectos</string>
 </resources>
