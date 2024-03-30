@@ -112,27 +112,30 @@ class DB {
             .addOnSuccessListener { result ->
                 val collaborators = mutableListOf<Collaborator>()
                 for (document in result) {
+                    try {
+                        // Check if the field project exists
+                        val projectId = if (document.data.containsKey("project")) {
+                            (document.data["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
 
-                    // Check if the field project exists
-                    val projectId = if (document.data.containsKey("project")) {
-                        (document.data["project"] as DocumentReference).id
-                    } else {
-                        ""
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data["id"] as String,
+                            document.data["name"] as String,
+                            document.data["lastname"] as String,
+                            document.data["email"] as String,
+                            document.data["phone"] as String,
+                            document.data["department"] as String,
+                            CollaboratorState.fromValue((document.data["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data["type"] as Long).toInt())
+                        )
+                        collaborators.add(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
                     }
-
-                    val collaborator = Collaborator(
-                        document.id,
-                        document.data["identification"] as String,
-                        document.data["name"] as String,
-                        document.data["lastname"] as String,
-                        document.data["email"] as String,
-                        document.data["phone"] as String,
-                        document.data["department"] as String,
-                        CollaboratorState.fromValue((document.data["state"] as Long).toInt()),
-                        projectId,
-                        CollaboratorType.fromValue((document.data["type"] as Long).toInt())
-                    )
-                    collaborators.add(collaborator)
                 }
                 future.complete(collaborators)
             }
@@ -156,26 +159,31 @@ class DB {
                         return@addOnSuccessListener
                     }
 
-                    // Check if the field project exists
-                    val projectId = if (document.data?.containsKey("project") == true) {
-                        (document.data!!["project"] as DocumentReference).id
-                    } else {
-                        ""
-                    }
+                    try {
+                        // Check if the field project exists
+                        val projectId = if (document.data?.containsKey("project") == true) {
+                            (document.data!!["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
 
-                    val collaborator = Collaborator(
-                        document.id,
-                        document.data?.get("id") as String,
-                        document.data!!["name"] as String,
-                        document.data!!["lastname"] as String,
-                        document.data!!["email"] as String,
-                        document.data!!["phone"] as String,
-                        document.data!!["department"] as String,
-                        CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
-                        projectId,
-                        CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
-                    )
-                    future.complete(collaborator)
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data?.get("id") as String,
+                            document.data!!["name"] as String,
+                            document.data!!["lastname"] as String,
+                            document.data!!["email"] as String,
+                            document.data!!["phone"] as String,
+                            document.data!!["department"] as String,
+                            CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
+                        )
+                        future.complete(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
+                        future.complete(null)
+                    }
                 } else {
                     future.complete(null)
                 }
@@ -197,28 +205,33 @@ class DB {
                 if (result.isEmpty) {
                     future.complete(null)
                 } else {
-                    val document = result.documents[0]
+                    try {
+                        val document = result.documents[0]
 
-                    // Check if the field project exists
-                    val projectId = if (document.data?.containsKey("project") == true) {
-                        (document.data!!["project"] as DocumentReference).id
-                    } else {
-                        ""
+                        // Check if the field project exists
+                        val projectId = if (document.data?.containsKey("project") == true) {
+                            (document.data!!["project"] as DocumentReference).id
+                        } else {
+                            ""
+                        }
+
+                        val collaborator = Collaborator(
+                            document.id,
+                            document.data?.get("id") as String,
+                            document.data!!["name"] as String,
+                            document.data!!["lastname"] as String,
+                            document.data!!["email"] as String,
+                            document.data!!["phone"] as String,
+                            document.data!!["department"] as String,
+                            CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
+                            projectId,
+                            CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
+                        )
+                        future.complete(collaborator)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing collaborator", e)
+                        future.complete(null)
                     }
-
-                    val collaborator = Collaborator(
-                        document.id,
-                        document.data?.get("id") as String,
-                        document.data!!["name"] as String,
-                        document.data!!["lastname"] as String,
-                        document.data!!["email"] as String,
-                        document.data!!["phone"] as String,
-                        document.data!!["department"] as String,
-                        CollaboratorState.fromValue((document.data!!["state"] as Long).toInt()),
-                        projectId,
-                        CollaboratorType.fromValue((document.data!!["type"] as Long).toInt())
-                    )
-                    future.complete(collaborator)
                 }
             }
             .addOnFailureListener { exception ->
