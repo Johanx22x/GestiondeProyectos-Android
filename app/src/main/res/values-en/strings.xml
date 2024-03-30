@@ -42,4 +42,6 @@
     <string name="previous">Previous</string>
     <string name="fragment_detail_project">Details</string>
     <string name="project_card">Projects</string>
+    <string name="edit">Edit</string>
+    <string name="type">Type</string>
 </resources>
