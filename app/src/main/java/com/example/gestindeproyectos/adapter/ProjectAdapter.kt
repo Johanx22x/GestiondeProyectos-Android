@@ -25,7 +25,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         val projectImage: ImageView = itemView.findViewById(R.id.project_image)
         val projectName: TextView = itemView.findViewById(R.id.project_name)
         val projectDescription: TextView = itemView.findViewById(R.id.project_description)
-        val projectDetailsButton: Button = itemView.findViewById(R.id.button_DetailsProject)
+        val projectDetailsButton: Button = itemView.findViewById(R.id.button_details_project)
         val projectEditDetailsButton: Button = itemView.findViewById(R.id.edit_details_project)
     }
 

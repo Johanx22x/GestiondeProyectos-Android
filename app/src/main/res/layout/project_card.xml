@@ -35,7 +35,7 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/button_DetailsProject"
+            android:id="@+id/button_details_project"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="See Details" />
