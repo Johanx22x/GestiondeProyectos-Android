@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_collaborators" />
 
     <fragment
+        android:id="@+id/nav_collaborator"
+        android:name="com.example.gestindeproyectos.ui.collaborators.CollaboratorFragment"
+        android:label="@string/menu_collaborator"
+        tools:layout="@layout/fragment_collaborator" />
+
+    <fragment
         android:id="@+id/nav_projects"
         android:name="com.example.gestindeproyectos.ui.projects.ProjectsFragment"
         android:label="@string/menu_projects"

@@ -1,10 +1,14 @@
 package com.example.gestindeproyectos.adapter
 
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gestindeproyectos.R
 import com.example.gestindeproyectos.db.DB
@@ -12,7 +16,7 @@ import com.example.gestindeproyectos.model.Collaborator
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
-class CollaboratorAdapter(private val collaborators: List<Collaborator>) : RecyclerView.Adapter<CollaboratorAdapter.CollaboratorViewHolder>() {
+class CollaboratorAdapter(private val collaborators: List<Collaborator>, private val navController: NavController) : RecyclerView.Adapter<CollaboratorAdapter.CollaboratorViewHolder>() {
 
     class CollaboratorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val collaboratorProfilePicture: ImageView = itemView.findViewById(R.id.collaborator_profile_picture)
@@ -21,6 +25,7 @@ class CollaboratorAdapter(private val collaborators: List<Collaborator>) : Recyc
         val collaboratorPhone: TextView = itemView.findViewById(R.id.collaborator_phone)
         val collaboratorType: TextView = itemView.findViewById(R.id.collaborator_type)
         val collaboratorProject: TextView = itemView.findViewById(R.id.collaborator_project)
+        val collaboratorEditButton: Button = itemView.findViewById(R.id.edit_collaborator)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CollaboratorViewHolder {
@@ -37,15 +42,24 @@ class CollaboratorAdapter(private val collaborators: List<Collaborator>) : Recyc
         // TODO: Handle collaborator type in a better way
         holder.collaboratorType.text = currentItem.getType().toString()
         if (currentItem.getProject() == "") {
-            holder.collaboratorProject.text = currentItem.getProject()
-            return
-        }
-        DB.instance.fetchProject(currentItem.getProject()).thenAccept { project ->
-            if (project == null) {
-                holder.collaboratorProject.text = "No project"
-                return@thenAccept
+            holder.collaboratorProject.text = "No project"
+        } else {
+            DB.instance.fetchProject(currentItem.getProject()).thenAccept { project ->
+                if (project == null) {
+                    holder.collaboratorProject.text = "No project"
+                } else {
+                    holder.collaboratorProject.text = project.getName()
+                }
             }
-            holder.collaboratorProject.text = project.getName()
+        }
+
+        holder.collaboratorEditButton.setOnClickListener() {
+            Log.d(TAG, "Edit button pressed!")
+            val collaboratorId = currentItem.getId()
+            val bundle = Bundle().apply {
+                putString("collaboratorId", collaboratorId)
+            }
+            navController.navigate(R.id.nav_collaborator, bundle)
         }
     }
 
@@ -59,4 +73,8 @@ class CollaboratorAdapter(private val collaborators: List<Collaborator>) : Recyc
     }
 
     override fun getItemCount() = collaborators.size
+
+    companion object {
+        private const val TAG = "CollaboratorAdapter"
+    }
 }

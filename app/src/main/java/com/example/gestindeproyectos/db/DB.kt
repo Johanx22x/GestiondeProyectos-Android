@@ -12,7 +12,10 @@ import com.example.gestindeproyectos.model.Project
 import com.example.gestindeproyectos.model.State
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirestoreRegistrar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.CompletableFuture
@@ -257,6 +260,32 @@ class DB {
             )
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
             .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
+    }
+
+    fun updateCollaboratorWorking(id: String, projectId: String, state: CollaboratorState) {
+        if (projectId != "") {
+            db.collection("Collaborator")
+                .document(id)
+                .update(
+                    mapOf(
+                        "state" to state.value,
+                        "project" to db.collection("Projects").document(projectId)
+                    )
+                )
+                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+                .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
+        } else {
+            db.collection("Collaborator")
+                .document(id)
+                .update(
+                    mapOf(
+                        "state" to state.value,
+                        "project" to FieldValue.delete()
+                    )
+                )
+                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+                .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
+        }
     }
 
     fun addCollaborator(
