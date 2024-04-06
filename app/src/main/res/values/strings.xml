@@ -49,4 +49,6 @@
     <string name="project_card">Projects</string>
     <string name="edit">Edit</string>
     <string name="type">Type</string>
+    <string name="menu_collaborator">Collaborator</string>
+    <string name="unassign">Unassign Project</string>
 </resources>

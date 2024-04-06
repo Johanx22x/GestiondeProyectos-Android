@@ -34,9 +34,6 @@ class MainActivity : AppCompatActivity() {
     // Firebase Auth
     private lateinit var auth: FirebaseAuth
 
-    // Firebase Storage
-    private lateinit var storage: FirebaseStorage
-
     // Current user
     private val currentUser: FirebaseUser
         get() = auth.currentUser!!
@@ -56,9 +53,6 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
-
-        // Initialize Firebase Storage
-        storage = FirebaseStorage.getInstance()
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
