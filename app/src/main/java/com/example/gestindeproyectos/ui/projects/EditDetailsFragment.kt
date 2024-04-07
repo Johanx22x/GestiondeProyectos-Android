@@ -47,11 +47,11 @@ class EditDetailsFragment : Fragment() {
 
         val updaterButton : Button = binding.buttonUpdateDetails
         updaterButton.setOnClickListener {
-            DB.instance.updateDetails(
-                projectId.toString(),
-                textViewName.toString(),
-                textViewDesc.toString()
-            )
+            // DB.instance.updateDetails(
+            //     projectId.toString(),
+            //     textViewName.toString(),
+            //     textViewDesc.toString()
+            // )
         }
 
         return root

@@ -1,6 +1,7 @@
 package com.example.gestindeproyectos.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 
 class Meeting (
     private val id: String,
@@ -8,7 +9,7 @@ class Meeting (
     private var subject: String,
     private var via: String,
     private var linkOrPlace: String,
-    private var members: List<Collaborator>
+    private var members: List<DocumentReference>
 ) {
     fun getId(): String {
         return id
@@ -46,11 +47,11 @@ class Meeting (
         this.linkOrPlace = linkOrPlace
     }
 
-    fun getMembers(): List<Collaborator> {
+    fun getMembers(): List<DocumentReference> {
         return members
     }
 
-    fun setMembers(members: List<Collaborator>) {
+    fun setMembers(members: List<DocumentReference>) {
         this.members = members
     }
 }

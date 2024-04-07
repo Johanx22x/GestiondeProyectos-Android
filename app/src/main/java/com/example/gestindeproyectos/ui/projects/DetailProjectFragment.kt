@@ -1,6 +1,7 @@
 package com.example.gestindeproyectos.ui.projects
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ class DetailProjectFragment : Fragment() {
     private var _binding: FragmentDetailProjectBinding? = null
 
     companion object {
+        private const val TAG = "DetailProjectFragment"
+
         fun newInstance(projectId: String): DetailProjectFragment {
             val fragment = DetailProjectFragment()
 
@@ -44,16 +47,17 @@ class DetailProjectFragment : Fragment() {
         //textView.text = projectId
         DB.instance.fetchProject(projectId.toString()).thenAccept { project ->
             if (project != null) {
-                val projectName = DB.instance.fetchMeetings(projectId.toString())
-                //val projectName = project.getMeetings()
-                //val projectName = project.getInitialDate()
-                //val projectName = project.getInitialDate()
-                val meetingsCollectionRef = db.collection("Project").document().collection("Meetings")
-
-
-                textView.text = projectName.toString()
-                    //descriptionTextView.text = project.description
-
+                DB.instance.fetchMeetings(projectId.toString()).thenAccept { meetings ->
+                    meetings.map {
+                        Log.d(TAG, it.getId())
+                    }
+                }
+                DB.instance.fetchTasks(projectId.toString()).thenAccept { tasks ->
+                    tasks.map {
+                        Log.d(TAG, it.getId())
+                    }
+                }
+                textView.text = project.getName()
             } else {
                 textView.text = "Proyecto no encontrado"
             }

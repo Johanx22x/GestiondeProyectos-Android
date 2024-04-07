@@ -1,11 +1,13 @@
 package com.example.gestindeproyectos.model
 
+import com.google.firebase.firestore.DocumentReference
+
 class Task(
     private val id: String,
     private var description: String,
     private var state: State,
     private var storyPoints: Int,
-    private var responsible: Collaborator
+    private var responsible: DocumentReference
 ) {
     fun getId(): String {
         return id
@@ -35,11 +37,11 @@ class Task(
         this.storyPoints = storyPoints
     }
 
-    fun getResponsible(): Collaborator {
+    fun getResponsible(): DocumentReference {
         return responsible
     }
 
-    fun setResponsible(responsible: Collaborator) {
+    fun setResponsible(responsible: DocumentReference) {
         this.responsible = responsible
     }
 }

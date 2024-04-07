@@ -10,12 +10,10 @@ import com.example.gestindeproyectos.model.ForumItem
 import com.example.gestindeproyectos.model.Meeting
 import com.example.gestindeproyectos.model.Project
 import com.example.gestindeproyectos.model.State
-import com.google.android.gms.tasks.Task
+import com.example.gestindeproyectos.model.Task
 import com.google.firebase.Timestamp
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirestoreRegistrar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.CompletableFuture
@@ -421,13 +419,26 @@ class DB {
     // param: Project ID
     fun fetchMeetings(id: String): CompletableFuture<List<Meeting>> {
         val future = CompletableFuture<List<Meeting>>()
-        db.collection("Project/$id/meetings")
+        db.collection("Project")
+            .document(id)
+            .collection("Meetings")
             .get()
             .addOnSuccessListener { documents ->
                 val meetingsList = mutableListOf<Meeting>()
                 for (document in documents) {
-                    val meeting = document.toObject(Meeting::class.java)
-                    meetingsList.add(meeting)
+                    try {
+                        val meeting = Meeting(
+                            document.id,
+                            document.data["datetime"] as Timestamp,
+                            document.data["subject"] as String,
+                            document.data["via"] as String,
+                            document.data["linkOrPlace"] as String,
+                            document.data["members"] as List<DocumentReference>
+                        )
+                        meetingsList.add(meeting)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Error getting document $e")
+                    }
                 }
                 future.complete(meetingsList)
             }
@@ -437,17 +448,47 @@ class DB {
         return future
     }
 
-    // Función para actualizar los detalles de un documento en Firebase
-    fun updateDetails(documentId: String, newName: String, newDescription: String): Task<Void> {
-
-        // Crea un mapa con los nuevos datos
-        val newData = hashMapOf(
-            "name" to newName,
-            "description" to newDescription
-        )
-
-        // Actualiza el documento con los nuevos datos
-        return db.collection("Project").document(documentId)
-            .update(newData as Map<String, Any>)
+    fun fetchTasks(id: String): CompletableFuture<List<Task>> {
+        val future = CompletableFuture<List<Task>>()
+        db.collection("Project")
+            .document(id)
+            .collection("Tasks")
+            .get()
+            .addOnSuccessListener { documents ->
+                val tasksList = mutableListOf<Task>()
+                for (document in documents) {
+                    try {
+                        val task = Task(
+                            document.id,
+                            document.data["description"] as String,
+                            State.fromValue((document.data["state"] as Long).toInt()),
+                            (document.data["storyPoints"] as Long).toInt(),
+                            document.data["responsible"] as DocumentReference
+                        )
+                        tasksList.add(task)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Error getting document $e")
+                    }
+                }
+                future.complete(tasksList)
+            }
+            .addOnFailureListener { exception ->
+                future.completeExceptionally(exception)
+            }
+        return future
     }
+
+    // Función para actualizar los detalles de un documento en Firebase
+    // fun updateDetails(documentId: String, newName: String, newDescription: String): Task<Void> {
+
+    //     // Crea un mapa con los nuevos datos
+    //     val newData = hashMapOf(
+    //         "name" to newName,
+    //         "description" to newDescription
+    //     )
+
+    //     // Actualiza el documento con los nuevos datos
+    //     return db.collection("Project").document(documentId)
+    //         .update(newData as Map<String, Any>)
+    // }
 }
