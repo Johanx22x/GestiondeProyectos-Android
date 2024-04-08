@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import com.example.gestindeproyectos.adapter.ForumItemRepliesAdapter
 import com.example.gestindeproyectos.databinding.FragmentForumItemBinding
 
 class ForumItemFragment: Fragment() {
@@ -44,6 +47,26 @@ class ForumItemFragment: Fragment() {
 
         _binding = FragmentForumItemBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val forumItemContentTextView: TextView = binding.forumItemContent
+        forumItemViewModel.forumItemContent.observeForever {
+            forumItemContentTextView.text = it
+        }
+
+        val forumItemAuthorNameTextView: TextView = binding.forumItemAuthorName
+        forumItemViewModel.forumItemAuthorName.observeForever {
+            forumItemAuthorNameTextView.text = it
+        }
+
+        val forumItemDateTextView: TextView = binding.forumItemDate
+        forumItemViewModel.forumItemDate.observeForever {
+            forumItemDateTextView.text = it
+        }
+
+        val forumItemRepliesRecyclerView: RecyclerView = binding.forumItemReplies
+        forumItemViewModel.forumItemReplies.observeForever {
+            forumItemRepliesRecyclerView.adapter = ForumItemRepliesAdapter(it)
+        }
 
         return root
     }

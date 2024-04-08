@@ -436,7 +436,7 @@ class DB {
                             document.id,
                             (document.data["author"] as DocumentReference).id,
                             document.data["content"] as String,
-                            document.data["date"] as Timestamp,
+                            document.data["datetime"] as Timestamp,
                             emptyList()
                         )
                         forumItems.add(forumItem)

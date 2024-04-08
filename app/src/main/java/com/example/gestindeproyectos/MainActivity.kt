@@ -36,16 +36,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     // Current user
-    private val currentUser: FirebaseUser
-        get() = auth.currentUser!!
+    private val currentUser: FirebaseUser?
+        get() = auth.currentUser
 
     private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Initialize ProfileViewModel
-        profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -54,6 +51,9 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+
+        checkUserLoggedIn()
+        checkUserInDB()
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
@@ -83,17 +83,17 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        // Initialize ProfileViewModel
+        profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+
         val headerView = navView.getHeaderView(0)
+        val userEmail = headerView.findViewById<TextView>(R.id.user_email)
+        userEmail.text = currentUser?.email ?: "Email"
+
         val userPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
         profileViewModel.userProfilePicture.observe(this) {
             userPhoto.setImageDrawable(it)
         }
-
-        val userEmail = headerView.findViewById<TextView>(R.id.user_email)
-        userEmail.text = currentUser.email
-
-        checkUserLoggedIn()
-        checkUserInDB()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -127,29 +127,31 @@ class MainActivity : AppCompatActivity() {
         // to complete the registration
         val currentUserEmail = auth.currentUser?.email
 
-        DB.instance.fetchCollaboratorWithEmail(currentUserEmail!!).thenAccept { collaborator ->
-            if (collaborator == null) {
-                // User is not in the database, redirect to ProfileFragment
-                val navController = findNavController(R.id.nav_host_fragment_content_main)
-                navController.navigate(R.id.nav_profile)
-            } else {
-                Log.d(TAG, "User is in the database")
-                val navView: NavigationView = binding.navView
-                val menu = navView.menu
-                val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
-                if (collaborator.getType() == CollaboratorType.MANAGER) {
-                    Log.d(TAG, "User is a manager")
-                    // Enable the Collaborators menu item
-                    collaboratorsItem.isVisible = true
-
-                    // NOTE: There is an issue that when the collaboratorsItem is set to visible
-                    // the Collaborators item is highlighted in the menu, but the actual
-                    // fragment is the HomeFragment.
-                    // This is the temporary (probably permanent haha) fix for this issue.
+        if (currentUserEmail != null) {
+            DB.instance.fetchCollaboratorWithEmail(currentUserEmail).thenAccept { collaborator ->
+                if (collaborator == null) {
+                    // User is not in the database, redirect to ProfileFragment
                     val navController = findNavController(R.id.nav_host_fragment_content_main)
-                    navController.navigate(R.id.nav_home)
+                    navController.navigate(R.id.nav_profile)
                 } else {
-                    collaboratorsItem.isVisible = false
+                    Log.d(TAG, "User is in the database")
+                    val navView: NavigationView = binding.navView
+                    val menu = navView.menu
+                    val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
+                    if (collaborator.getType() == CollaboratorType.MANAGER) {
+                        Log.d(TAG, "User is a manager")
+                        // Enable the Collaborators menu item
+                        collaboratorsItem.isVisible = true
+
+                        // NOTE: There is an issue that when the collaboratorsItem is set to visible
+                        // the Collaborators item is highlighted in the menu, but the actual
+                        // fragment is the HomeFragment.
+                        // This is the temporary (probably permanent haha) fix for this issue.
+                        val navController = findNavController(R.id.nav_host_fragment_content_main)
+                        navController.navigate(R.id.nav_home)
+                    } else {
+                        collaboratorsItem.isVisible = false
+                    }
                 }
             }
         }
