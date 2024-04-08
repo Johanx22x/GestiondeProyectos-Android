@@ -11,6 +11,8 @@ import com.example.gestindeproyectos.databinding.FragmentDetailProjectBinding
 import com.example.gestindeproyectos.db.DB
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class DetailProjectFragment : Fragment() {
 
@@ -52,23 +54,24 @@ class DetailProjectFragment : Fragment() {
             if (project != null) {
                 DB.instance.fetchMeetings(projectId.toString()).thenAccept { meetings ->
                     meetings.map {
-                        val totalMeetings = it.getSubject() + " " + it.getVia() + " " + it.getLinkOrPlace() + " " + it.getMembers()
+                        val totalMeetings = "Meeting Subject: " + it.getSubject() + "\nVia: " + it.getVia() + "\nPlace: " + it.getLinkOrPlace() + "\n"//Members: " + it.getMembers() + "\n"
                         meetingView.text = totalMeetings
                     }
                 }
                 DB.instance.fetchTasks(projectId.toString()).thenAccept { tasks ->
                     tasks.map {
-                        val totalTasks = it.getDescription() + " " + it.getState() + " " + it.getStoryPoints() + " " + it.getResponsible()
+                        val totalTasks = "Task Name: " + it.getDescription() + "\nState: " + it.getState() + "\nStory Points: " + it.getStoryPoints() + "\n"//Responsible: " + it.getResponsible().get() + "\n"
                         taskView.text = totalTasks
                     }
                 }
                 DB.instance.fetchResources(projectId.toString()).thenAccept { res ->
                     res.map {
-                        val totalRes = it.getName() + "\n" + it.getDescription() + " " + it.getAmount()
+                        val totalRes = "Resource Name: " + it.getName() + "\nDescription: " + it.getDescription() + "\nAmount: " + it.getAmount() + "\n"
                         resView.text = totalRes
                     }
                 }
-                val totalInfo = "Name: " + project.getName() + "\nDescription:  " + project.getDescription()
+
+                val totalInfo = "Name: " + project.getName() + "\nDescription:  " + project.getDescription() + "\nState: " + project.getState() + "\nBudget: " + project.getBudget() + "\n"
                 textView.text = totalInfo
             } else {
                 textView.text = "Proyecto no encontrado"

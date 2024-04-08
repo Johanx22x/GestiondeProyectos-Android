@@ -86,10 +86,28 @@ class AddTask : Fragment() {
             val sp = ((binding.editstorypoints.text.toString()).toInt()).toLong()
             val responsible = spinner2.selectedItem.toString()
             //responsible needs to be a documentreference of firebase
-            val responsibleFinal = db.collection("Collaborator").document(spinner2.selectedItem.toString())
+            db.collection("Collaborator").whereEqualTo("name", responsible).get().addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val responsibleFinal = db.collection("Collaborator").document(document.id)
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    Log.d(TAG, "${document.id}")
+                    // search for the project in the database
+
+                    DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
+
+                    //DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
+                }
+            }
+
+            // change the fragment to the previous one
+            val fragment = DetailProjectFragment.newInstance(projectId.toString())
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.detail_project, fragment)
+
+
 
             // TODO make fun to path to responsible (reference)
-            DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
+            //DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
         }
         return root
     }

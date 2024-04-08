@@ -55,7 +55,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         }
 
         holder.projectEditDetailsButton.setOnClickListener() {
-            val projectId = currentItem.getName()
+            val projectId = currentItem.getId()
             val bundle = Bundle().apply {
                 putString("projectId", projectId)
             }
@@ -63,7 +63,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         }
 
         holder.projectNewTask.setOnClickListener() {
-            val projectId = currentItem.getName()
+            val projectId = currentItem.getId()
             val bundle = Bundle().apply {
                 putString("projectId", projectId)
             }

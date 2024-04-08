@@ -43,15 +43,26 @@ class EditDetailsFragment : Fragment() {
         val root: View = binding.root
         val textViewName: TextView = binding.editName
         val textViewDesc: TextView = binding.editDesc
-        val textViewBudget: TextView = binding.editBudget
+
+        DB.instance.fetchProject(projectId.toString()).thenAccept { project ->
+            if (project != null) {
+                textViewName.text = project.getName()
+                textViewDesc.text = project.getDescription()
+            }
+        }
 
         val updaterButton : Button = binding.buttonUpdateDetails
         updaterButton.setOnClickListener {
-            // DB.instance.updateDetails(
-            //     projectId.toString(),
-            //     textViewName.toString(),
-            //     textViewDesc.toString()
-            // )
+             DB.instance.updateDetails(
+                 projectId.toString(),
+                 textViewName.toString(),
+                 textViewDesc.toString()
+             )
+        }
+
+        val deleterButton : Button = binding.button3
+        deleterButton.setOnClickListener {
+            DB.instance.deleteProject(projectId.toString())
         }
 
         return root

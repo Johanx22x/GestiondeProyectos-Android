@@ -561,16 +561,25 @@ class DB {
     }
 
     // Función para actualizar los detalles de un documento en Firebase
-    // fun updateDetails(documentId: String, newName: String, newDescription: String): Task<Void> {
+    fun updateDetails(id: String, name: String, description: String) {
+        db.collection("Project")
+            .document(id)
+            .update(
+                mapOf(
+                    "name" to name,
+                    "description" to description
+                )
+            )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
+    }
 
-    //     // Crea un mapa con los nuevos datos
-    //     val newData = hashMapOf(
-    //         "name" to newName,
-    //         "description" to newDescription
-    //     )
-
-    //     // Actualiza el documento con los nuevos datos
-    //     return db.collection("Project").document(documentId)
-    //         .update(newData as Map<String, Any>)
-    // }
+    // Función para borrar un documento en Firebase
+    fun deleteProject(id: String) {
+        db.collection("Project")
+            .document(id)
+            .delete()
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error deleting document", e) }
+    }
 }
