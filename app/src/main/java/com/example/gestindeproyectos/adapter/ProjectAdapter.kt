@@ -27,6 +27,7 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
         val projectDescription: TextView = itemView.findViewById(R.id.project_description)
         val projectDetailsButton: Button = itemView.findViewById(R.id.button_details_project)
         val projectEditDetailsButton: Button = itemView.findViewById(R.id.edit_details_project)
+        val projectNewTask : Button = itemView.findViewById(R.id.new_task_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
@@ -59,6 +60,14 @@ class ProjectAdapter(private val projectList: List<Project>, private val navCont
                 putString("projectId", projectId)
             }
             navController.navigate(R.id.edit_details_project, bundle)
+        }
+
+        holder.projectNewTask.setOnClickListener() {
+            val projectId = currentItem.getName()
+            val bundle = Bundle().apply {
+                putString("projectId", projectId)
+            }
+            navController.navigate(R.id.add_task, bundle)
         }
     }
 

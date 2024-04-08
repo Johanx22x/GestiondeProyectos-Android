@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
@@ -55,6 +56,24 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                // No action needed
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                // Call checkUserInDB() when the drawer is opened
+                checkUserType()
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                // No action needed
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // No action needed
+            }
+        })
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
@@ -115,12 +134,12 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.nav_profile)
             } else {
                 Log.d(TAG, "User is in the database")
+                val navView: NavigationView = binding.navView
+                val menu = navView.menu
+                val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
                 if (collaborator.getType() == CollaboratorType.MANAGER) {
                     Log.d(TAG, "User is a manager")
                     // Enable the Collaborators menu item
-                    val navView: NavigationView = binding.navView
-                    val menu = navView.menu
-                    val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
                     collaboratorsItem.isVisible = true
 
                     // NOTE: There is an issue that when the collaboratorsItem is set to visible
@@ -129,6 +148,31 @@ class MainActivity : AppCompatActivity() {
                     // This is the temporary (probably permanent haha) fix for this issue.
                     val navController = findNavController(R.id.nav_host_fragment_content_main)
                     navController.navigate(R.id.nav_home)
+                } else {
+                    collaboratorsItem.isVisible = false
+                }
+            }
+        }
+    }
+
+    private fun checkUserType() {
+        val currentUserEmail = auth.currentUser?.email
+
+        DB.instance.fetchCollaboratorWithEmail(currentUserEmail!!).thenAccept { collaborator ->
+            if (collaborator != null) {
+                val navView: NavigationView = binding.navView
+                val menu = navView.menu
+                val collaboratorsItem = menu.findItem(R.id.nav_collaborators)
+
+                if (collaborator.getType() == CollaboratorType.MANAGER) {
+                    collaboratorsItem.isVisible = true
+                } else {
+                    collaboratorsItem.isVisible = false
+
+                    val navController = findNavController(R.id.nav_host_fragment_content_main)
+                    if (navController.currentDestination?.id == R.id.nav_collaborators) {
+                        navController.navigate(R.id.nav_home)
+                    }
                 }
             }
         }

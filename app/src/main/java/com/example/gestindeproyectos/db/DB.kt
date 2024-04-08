@@ -9,6 +9,7 @@ import com.example.gestindeproyectos.model.Forum
 import com.example.gestindeproyectos.model.ForumItem
 import com.example.gestindeproyectos.model.Meeting
 import com.example.gestindeproyectos.model.Project
+import com.example.gestindeproyectos.model.Resource
 import com.example.gestindeproyectos.model.State
 import com.example.gestindeproyectos.model.Task
 import com.google.firebase.Timestamp
@@ -260,14 +261,16 @@ class DB {
             .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
     }
 
-    fun updateCollaboratorWorking(id: String, projectId: String, state: CollaboratorState) {
-        if (projectId != "") {
+    fun updateCollaboratorWorking(id: String, projectId: String, state: CollaboratorState, type: CollaboratorType) {
+        Log.d(TAG, "Updating Collaborator with data: id: $id, projectId: $projectId, state: $state, type: $type")
+        if (projectId != "None") {
             db.collection("Collaborator")
                 .document(id)
                 .update(
                     mapOf(
                         "state" to state.value,
-                        "project" to db.collection("Projects").document(projectId)
+                        "project" to db.collection("Projects").document(projectId),
+                        "type" to type.value
                     )
                 )
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
@@ -278,7 +281,8 @@ class DB {
                 .update(
                     mapOf(
                         "state" to state.value,
-                        "project" to FieldValue.delete()
+                        "project" to FieldValue.delete(),
+                        "type" to type.value
                     )
                 )
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
@@ -511,6 +515,84 @@ class DB {
                 future.completeExceptionally(exception)
             }
         return future
+    }
+
+    //funcion de resources
+    fun fetchResources(id: String): CompletableFuture<List<Resource>> {
+        val future = CompletableFuture<List<Resource>>()
+        db.collection("Project")
+            .document(id)
+            .collection("Resources")
+            .get()
+            .addOnSuccessListener { documents ->
+                val resourcesList = mutableListOf<Resource>()
+                for (document in documents) {
+                    try {
+                        val resource = Resource(
+                            document.id,
+                            document.data["name"] as String,
+                            document.data["description"] as String,
+                            (document.data["amount"] as Long).toInt(),
+                        )
+                        resourcesList.add(resource)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Error getting document $e")
+                    }
+                }
+                future.complete(resourcesList)
+            }
+            .addOnFailureListener { exception ->
+                future.completeExceptionally(exception)
+            }
+        return future
+    }
+
+    //funcion de records
+    fun fetchRecords(id: String): CompletableFuture<List<com.example.gestindeproyectos.model.Record>> {
+        val future = CompletableFuture<List<com.example.gestindeproyectos.model.Record>>()
+        db.collection("Project")
+            .document(id)
+            .collection("Records")
+            .get()
+            .addOnSuccessListener { documents ->
+                val recordsList = mutableListOf<com.example.gestindeproyectos.model.Record>()
+                for (document in documents) {
+                    try {
+                        val record = com.example.gestindeproyectos.model.Record(
+                            document.id,
+                            // get data from firebase
+                            document.data["timestamp"] as Timestamp,
+                            document.data["description"] as String,
+                            document.data["author"] as Collaborator
+                        )
+                        recordsList.add(record)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Error getting document $e")
+                    }
+                }
+                future.complete(recordsList)
+            }
+            .addOnFailureListener { exception ->
+                future.completeExceptionally(exception)
+            }
+        return future
+    }
+
+    // funcion para anadir una nueva tarea en firebase
+    fun addTask(id: String, description: String, state: Int, storyPoints: Long, responsible: DocumentReference) {
+        db.collection("Project")
+            .document(id)
+            .collection("Tasks")
+            .add(
+                mapOf(
+                    "description" to description,
+                    "state" to state,
+                    "storyPoints" to storyPoints,
+                    "responsible" to responsible
+                )
+            )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 
     // Función para actualizar los detalles de un documento en Firebase
