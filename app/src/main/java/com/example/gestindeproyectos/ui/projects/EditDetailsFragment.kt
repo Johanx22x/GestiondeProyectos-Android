@@ -55,8 +55,8 @@ class EditDetailsFragment : Fragment() {
         updaterButton.setOnClickListener {
              DB.instance.updateDetails(
                  projectId.toString(),
-                 textViewName.toString(),
-                 textViewDesc.toString()
+                 textViewName.text.toString(),
+                 textViewDesc.text.toString()
              )
         }
 
