@@ -64,7 +64,7 @@ class DetailProjectFragment : Fragment() {
                 }
                 DB.instance.fetchResources(projectId.toString()).thenAccept { res ->
                     res.map {
-                        val totalRes = it.getName() + " " + it.getDescription() + " " + it.getAmount()
+                        val totalRes = it.getName() + "\n" + it.getDescription() + " " + it.getAmount()
                         resView.text = totalRes
                     }
                 }
