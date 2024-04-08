@@ -14,5 +14,14 @@ enum class CollaboratorType(val value: Int) {
                 else -> throw IllegalArgumentException("Invalid value")
             }
         }
+
+        fun fromOrdinal(ordinal: String): CollaboratorType {
+            return when (ordinal.uppercase()) {
+                "NONE" -> NONE
+                "MANAGER" -> MANAGER
+                "RESPONSIBLE" -> RESPONSIBLE
+                else -> throw IllegalArgumentException("Invalid value")
+            }
+        }
     }
 }

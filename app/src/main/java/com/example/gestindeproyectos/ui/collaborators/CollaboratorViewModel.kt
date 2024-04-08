@@ -24,6 +24,7 @@ class CollaboratorViewModel(application: Application, collaboratorId: String) : 
     private val _collaboratorEmail = MutableLiveData<String>()
     private val _collaboratorProject = MutableLiveData<String>()
     private val _projects = MutableLiveData<ArrayAdapter<String>>()
+    private val _types = MutableLiveData<ArrayAdapter<String>>()
 
     init {
         val storageRef = FirebaseStorage.getInstance().reference
@@ -76,38 +77,53 @@ class CollaboratorViewModel(application: Application, collaboratorId: String) : 
             _collaboratorName.value = it.getFullName()
             _collaboratorEmail.value = it.getEmail()
             if (it.getProject().isEmpty()) {
-                _collaboratorProject.value = "No Project"
+                _collaboratorProject.value = "None"
 
                 DB.instance.fetchProjects().thenAccept { projects ->
                     val projectNames = projects.map { it.getName() }.toMutableList()
                     projectNames.sort()
+                    projectNames.add(0, "None")
                     val adapter = ArrayAdapter(getApplication(), android.R.layout.simple_spinner_item, projectNames)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     _projects.postValue(adapter)
                 }
-                return
-            }
-            DB.instance.fetchProject(it.getProject()).thenAccept { project ->
-                _collaboratorProject.postValue(project?.getName())
+            } else {
+                DB.instance.fetchProject(it.getProject()).thenAccept { project ->
+                    _collaboratorProject.postValue(project?.getName())
 
-                DB.instance.fetchProjects().thenAccept { projects ->
-                    val projectNames = projects.map { it.getName() }.toMutableList()
-                    projectNames.sort()
+                    DB.instance.fetchProjects().thenAccept { projects ->
+                        val projectNames = projects.map { it.getName() }.toMutableList()
+                        projectNames.sort()
 
-                    val collaboratorProjectName = _collaboratorProject.value?.toString()
-                    val collaboratorProjectIndex = collaboratorProjectName?.let { projectNames.indexOf(it) }
+                        val collaboratorProjectName = _collaboratorProject.value?.toString()
+                        val collaboratorProjectIndex =
+                            collaboratorProjectName?.let { projectNames.indexOf(it) }
 
-                    // Move collaborator's project to the first position if found
-                    if (collaboratorProjectIndex != null && collaboratorProjectIndex != -1) {
-                        projectNames.removeAt(collaboratorProjectIndex)
-                        projectNames.add(0, collaboratorProjectName)
+                        // Move collaborator's project to the first position if found
+                        if (collaboratorProjectIndex != null && collaboratorProjectIndex != -1) {
+                            projectNames.removeAt(collaboratorProjectIndex)
+                            projectNames.add(0, collaboratorProjectName)
+                            projectNames.add(1, "None")
+                        }
+
+                        val adapter = ArrayAdapter(
+                            getApplication(),
+                            android.R.layout.simple_spinner_item,
+                            projectNames
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        _projects.postValue(adapter)
                     }
-
-                    val adapter = ArrayAdapter(getApplication(), android.R.layout.simple_spinner_item, projectNames)
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    _projects.postValue(adapter)
                 }
             }
+            val types: MutableList<String> = arrayOf("NONE", "MANAGER", "RESPONSIBLE").toMutableList()
+            val collaboratorType = collaborator.getType().toString()
+            val collaboratorTypeIndex = types.indexOf(collaboratorType)
+            types.removeAt(collaboratorTypeIndex)
+            types.add(0, collaboratorType)
+            val adapter = ArrayAdapter(getApplication(), android.R.layout.simple_spinner_item, types)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            _types.postValue(adapter)
         }
     }
 
@@ -128,4 +144,5 @@ class CollaboratorViewModel(application: Application, collaboratorId: String) : 
     val collaboratorName: LiveData<String> = _collaboratorName
     val collaboratorEmail: LiveData<String> = _collaboratorEmail
     val projectList: LiveData<ArrayAdapter<String>> = _projects
+    val typeList: LiveData<ArrayAdapter<String>> = _types
 }
