@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gestindeproyectos.adapter.ForumItemAdapter
@@ -40,7 +41,7 @@ class ForumFragment : Fragment() {
                 DB.instance.fetchForumItems(forum.getId()).thenAccept { forumItems ->
                     activity?.runOnUiThread {
                         Log.d(TAG, "Forum items: $forumItems")
-                        binding.forumItemList.adapter = ForumItemAdapter(forumItems)
+                        binding.forumItemList.adapter = ForumItemAdapter(forumItems, forum.getId(), findNavController())
                     }
                 }
             }
