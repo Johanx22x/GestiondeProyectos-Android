@@ -44,20 +44,32 @@ class DetailProjectFragment : Fragment() {
         _binding = FragmentDetailProjectBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val textView: TextView = binding.titleProject
+        val meetingView: TextView = binding.meetingsV
+        val taskView: TextView = binding.taskv
+        val resView: TextView = binding.resV
         //textView.text = projectId
         DB.instance.fetchProject(projectId.toString()).thenAccept { project ->
             if (project != null) {
                 DB.instance.fetchMeetings(projectId.toString()).thenAccept { meetings ->
                     meetings.map {
-                        Log.d(TAG, it.getId())
+                        val totalMeetings = it.getSubject() + " " + it.getVia() + " " + it.getLinkOrPlace() + " " + it.getMembers()
+                        meetingView.text = totalMeetings
                     }
                 }
                 DB.instance.fetchTasks(projectId.toString()).thenAccept { tasks ->
                     tasks.map {
-                        Log.d(TAG, it.getId())
+                        val totalTasks = it.getDescription() + " " + it.getState() + " " + it.getStoryPoints() + " " + it.getResponsible()
+                        taskView.text = totalTasks
                     }
                 }
-                textView.text = project.getName()
+                DB.instance.fetchResources(projectId.toString()).thenAccept { res ->
+                    res.map {
+                        val totalRes = it.getName() + " " + it.getDescription() + " " + it.getAmount()
+                        resView.text = totalRes
+                    }
+                }
+                val totalInfo = "Name: " + project.getName() + "\nDescription:  " + project.getDescription()
+                textView.text = totalInfo
             } else {
                 textView.text = "Proyecto no encontrado"
             }

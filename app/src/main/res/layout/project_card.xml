@@ -46,6 +46,12 @@
             android:layout_height="wrap_content"
             android:text="Edit Details" />
 
+        <Button
+            android:id="@+id/new_task_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Task" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
