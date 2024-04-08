@@ -381,6 +381,41 @@ class DB {
         return future
     }
 
+    fun fetchForumItem(forumId: String, forumItemId: String): CompletableFuture<ForumItem> {
+        val future = CompletableFuture<ForumItem>()
+        db.collection("Forum")
+            .document(forumId)
+            .collection("Items")
+            .document(forumItemId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    if (!document.exists()) {
+                        future.complete(null)
+                        return@addOnSuccessListener
+                    }
+                    try {
+                        val forumItem = ForumItem(
+                            document.id,
+                            (document.data?.get("author") as DocumentReference).id,
+                            document.data!!["content"] as String,
+                            document.data!!["datetime"] as Timestamp,
+                            emptyList()
+                        )
+                        future.complete(forumItem)
+                    } catch (e: Exception) {
+                        Log.e("DB", "Error parsing forum item", e)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: $exception")
+                future.completeExceptionally(exception)
+            }
+
+        return future
+    }
+
     fun fetchForumItemReplies(forumId: String, forumItemId: String): CompletableFuture<List<ForumItem>> {
         val future = CompletableFuture<List<ForumItem>>()
         db.collection("Forum")

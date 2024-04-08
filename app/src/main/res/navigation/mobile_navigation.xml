@@ -36,6 +36,12 @@
         tools:layout="@layout/fragment_forum" />
 
     <fragment
+        android:id="@+id/nav_forum_item"
+        android:name="com.example.gestindeproyectos.ui.forum.ForumItemFragment"
+        android:label="@string/menu_forum_item"
+        tools:layout="@layout/fragment_forum_item" />
+
+    <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.gestindeproyectos.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
