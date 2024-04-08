@@ -261,14 +261,16 @@ class DB {
             .addOnFailureListener { e -> Log.e(TAG, "Error updating document", e) }
     }
 
-    fun updateCollaboratorWorking(id: String, projectId: String, state: CollaboratorState) {
-        if (projectId != "") {
+    fun updateCollaboratorWorking(id: String, projectId: String, state: CollaboratorState, type: CollaboratorType) {
+        Log.d(TAG, "Updating Collaborator with data: id: $id, projectId: $projectId, state: $state, type: $type")
+        if (projectId != "None") {
             db.collection("Collaborator")
                 .document(id)
                 .update(
                     mapOf(
                         "state" to state.value,
-                        "project" to db.collection("Projects").document(projectId)
+                        "project" to db.collection("Projects").document(projectId),
+                        "type" to type.value
                     )
                 )
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
@@ -279,7 +281,8 @@ class DB {
                 .update(
                     mapOf(
                         "state" to state.value,
-                        "project" to FieldValue.delete()
+                        "project" to FieldValue.delete(),
+                        "type" to type.value
                     )
                 )
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }

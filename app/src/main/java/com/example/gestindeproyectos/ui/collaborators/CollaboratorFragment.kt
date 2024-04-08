@@ -18,6 +18,7 @@ import androidx.lifecycle.map
 import com.example.gestindeproyectos.databinding.FragmentCollaboratorBinding
 import com.example.gestindeproyectos.db.DB
 import com.example.gestindeproyectos.model.CollaboratorState
+import com.example.gestindeproyectos.model.CollaboratorType
 import com.example.gestindeproyectos.model.Project
 
 class CollaboratorFragment: Fragment() {
@@ -67,6 +68,10 @@ class CollaboratorFragment: Fragment() {
         collaboratorViewModel.projectList.observe(viewLifecycleOwner) {
             collaboratorProjectSpinner.adapter = it
         }
+        val collaboratorTypeSpinner: Spinner = binding.typeSelect
+        collaboratorViewModel.typeList.observe(viewLifecycleOwner) {
+            collaboratorTypeSpinner.adapter = it
+        }
 
         val saveButton: Button = binding.saveButton
         saveButton.setOnClickListener() {
@@ -76,25 +81,21 @@ class CollaboratorFragment: Fragment() {
                     Toast.makeText(context, "Can't update this collaborator", Toast.LENGTH_SHORT).show()
                     return@thenAccept
                 }
-                val project: Project = projects.filter { it.getName() == collaboratorProjectSpinner.selectedItem }[0]
-                val projectId = project.getId()
                 val state = CollaboratorState.ACTIVE
-                DB.instance.updateCollaboratorWorking(collaboratorId, projectId, state)
+                val type: CollaboratorType = CollaboratorType.fromOrdinal(collaboratorTypeSpinner.selectedItem.toString())
+                var projectId = "None"
+                if (collaboratorProjectSpinner.selectedItem.toString() != "None") {
+                    val project: Project = projects.filter { it.getName() == collaboratorProjectSpinner.selectedItem }[0]
+                    projectId = project.getId()
+                } else {
+                    if (type == CollaboratorType.RESPONSIBLE) {
+                        Toast.makeText(context, "Cannot assign responsible if the user isn't in a project", Toast.LENGTH_LONG).show()
+                        return@thenAccept
+                    }
+                }
+                DB.instance.updateCollaboratorWorking(collaboratorId, projectId, state, type)
+                Toast.makeText(context, "Collaborator updated!", Toast.LENGTH_SHORT).show()
             }
-            Toast.makeText(context, "Collaborator updated!", Toast.LENGTH_SHORT).show()
-        }
-
-        val unassignButton: Button = binding.unassignButton
-        unassignButton.setOnClickListener() {
-            val collaboratorId = collaboratorViewModel.collaborator.value?.getId()
-            if (collaboratorId == null) {
-                Toast.makeText(context, "Can't update this collaborator", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val project = ""
-            val state = CollaboratorState.INACTIVE
-            DB.instance.updateCollaboratorWorking(collaboratorId, project, state)
-            Toast.makeText(context, "Collaborator updated!", Toast.LENGTH_SHORT).show()
         }
 
         return root
