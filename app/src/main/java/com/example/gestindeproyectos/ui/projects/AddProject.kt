@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.gestindeproyectos.databinding.FragmentAddProjectBinding
 import com.example.gestindeproyectos.db.DB
+import com.example.gestindeproyectos.model.State
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -61,7 +62,7 @@ class AddProject : Fragment() {
                     Log.d(AddProject.TAG, "${document.id} => ${document.data}")
                     Log.d(AddProject.TAG, "${document.id}")
                     val timeS = com.google.firebase.Timestamp.now()
-                    DB.instance.addProject(name, desc, timeS, listOf(responsibleFinal))
+                    DB.instance.addProject(name, desc, 0, State.IN_PROGRESS, timeS, listOf(responsibleFinal))
                 }
             }
 

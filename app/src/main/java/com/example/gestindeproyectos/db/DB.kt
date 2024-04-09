@@ -622,6 +622,8 @@ class DB {
     fun addProject(
         name: String,
         description: String,
+        budget: Long,
+        state: State,
         initialDate: Timestamp,
         responsible: List<DocumentReference>
     ) {
@@ -630,6 +632,8 @@ class DB {
                 mapOf(
                     "name" to name,
                     "description" to description,
+                    "budget" to budget,
+                    "state" to state.value,
                     "initialDate" to initialDate,
                     "collaborators" to responsible
                 )
