@@ -617,4 +617,24 @@ class DB {
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
             .addOnFailureListener { e -> Log.e(TAG, "Error deleting document", e) }
     }
+
+    // funcion para anadir un nuevo proyecto en firebase
+    fun addProject(
+        name: String,
+        description: String,
+        initialDate: Timestamp,
+        responsible: List<DocumentReference>
+    ) {
+        db.collection("Project")
+            .add(
+                mapOf(
+                    "name" to name,
+                    "description" to description,
+                    "initialDate" to initialDate,
+                    "collaborators" to responsible
+                )
+            )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
+    }
 }

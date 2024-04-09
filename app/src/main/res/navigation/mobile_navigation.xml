@@ -78,4 +78,10 @@
         android:label="@string/fragment_detail_project"
         tools:layout="@layout/fragment_add_task" />
 
+    <fragment
+        android:id="@+id/fragment_add_project"
+        android:name="com.example.gestindeproyectos.ui.projects.AddProject"
+        android:label="@string/fragment_detail_project"
+        tools:layout="@layout/fragment_add_project" />
+
 </navigation>

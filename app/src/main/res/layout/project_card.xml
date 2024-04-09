@@ -52,6 +52,12 @@
             android:layout_height="wrap_content"
             android:text="New Task" />
 
+        <Button
+            android:id="@+id/addProjectB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Project" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

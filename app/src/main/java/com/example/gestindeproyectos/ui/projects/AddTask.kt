@@ -91,11 +91,7 @@ class AddTask : Fragment() {
                     val responsibleFinal = db.collection("Collaborator").document(document.id)
                     Log.d(TAG, "${document.id} => ${document.data}")
                     Log.d(TAG, "${document.id}")
-                    // search for the project in the database
-
                     DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
-
-                    //DB.instance.addTask(projectId.toString(), desc, statusNum, sp, responsibleFinal)
                 }
             }
 
